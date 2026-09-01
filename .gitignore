@@ -1,0 +1,18 @@
+.gradle/
+build/
+run/
+run-data/
+mcmodsrepo/
+*.log
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.vscode/
+bin/
+out/

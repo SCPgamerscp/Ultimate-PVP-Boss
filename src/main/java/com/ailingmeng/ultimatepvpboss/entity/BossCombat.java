@@ -154,7 +154,7 @@ public class BossCombat {
                 acted = true;
             }
             if (!acted) {
-                boss.getNavigation().moveTo(target, 1.25);
+                boss.getNavigation().moveTo(target, 1.3);
             }
         } else {
             if (blocking && burstCd == 0) {
@@ -630,11 +630,11 @@ public class BossCombat {
         if (perp.lengthSqr() < 0.0001) {
             return;
         }
-        perp = perp.normalize().scale(0.18 * strafeSign);
+        perp = perp.normalize().scale(0.06 * strafeSign);
         Vec3 motion = boss.getDeltaMovement().add(perp);
         boss.setDeltaMovement(motion.x, boss.getDeltaMovement().y, motion.z);
         if (boss.distanceTo(target) > 2.4) {
-            boss.getNavigation().moveTo(target, 1.15);
+            boss.getNavigation().moveTo(target, 1.0);
         }
     }
 

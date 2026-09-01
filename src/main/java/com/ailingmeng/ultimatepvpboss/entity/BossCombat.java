@@ -124,36 +124,26 @@ public class BossCombat {
             return;
         }
 
-        if (dist <= 3.7) {
+        if (dist <= 4.5) {
             if (poisonCd == 0 && dist < 3.2) {
                 throwPoison(target);
             }
-            if (webCd == 0) {
-                placeWebThenLava(target);
-            }
-            if (blocking && axeCd == 0) {
-                axeHit(target);
-            } else if (swordCd == 0) {
-                swordCrit(target);
-            }
-            circleStrafe(target);
-        } else if (dist <= 8.5) {
-            boolean acted = false;
             if (crystalCd == 0 && grief()) {
-                acted = placeAndDetonateCrystal(target);
-            }
-            if (!acted && anchorCd == 0 && grief()) {
-                acted = placeAndDetonateAnchor(target);
-            }
-            if (!acted && webCd == 0 && grief()) {
+                placeAndDetonateCrystal(target);
+            } else if (anchorCd == 0 && grief()) {
+                placeAndDetonateAnchor(target);
+            } else if (webCd == 0 && grief()) {
                 placeWebThenLava(target);
-                acted = true;
             }
-            if (blocking && burstCd == 0) {
-                startCrossbowBurst(target);
-                acted = true;
-            }
-            if (!acted) {
+
+            if (dist <= 3.7) {
+                if (blocking && axeCd == 0) {
+                    axeHit(target);
+                } else if (swordCd == 0) {
+                    swordCrit(target);
+                }
+                circleStrafe(target);
+            } else {
                 boss.getNavigation().moveTo(target, 1.3);
             }
         } else {

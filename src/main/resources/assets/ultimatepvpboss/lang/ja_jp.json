@@ -1,0 +1,15 @@
+{
+  "entity.ultimatepvpboss.pvp_boss": "PvPチャンピオン",
+  "item.ultimatepvpboss.pvp_boss_spawn_egg": "PvPチャンピオンスポーンエッグ",
+  "itemGroup.ultimatepvpboss": "Ultimate PVP Boss",
+  "command.ultimatepvpboss.spawned": "%s を召喚した。",
+  "command.ultimatepvpboss.none": "このワールドにPvPボスはいない。",
+  "command.ultimatepvpboss.named": "ボス名を %s に設定した。",
+  "command.ultimatepvpboss.skin": "ボスのスキンを %s に設定した。",
+  "command.ultimatepvpboss.removed": "PvPボスを %s 体削除した。",
+  "command.ultimatepvpboss.kills": "%s の村人キル: %s / %s。",
+  "message.ultimatepvpboss.awakened": "%sが村人を10人倒した。%sが現れた。",
+  "message.ultimatepvpboss.fallen": "%sは倒れた。チャンピオンの備蓄はお前のものだ。",
+  "message.ultimatepvpboss.totem": "%sは不死のトーテムを使った（残り%s）。",
+  "config.ultimatepvpboss.title": "Ultimate PVP Boss"
+}

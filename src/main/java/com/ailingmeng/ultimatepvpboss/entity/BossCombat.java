@@ -62,9 +62,43 @@ public class BossCombat {
     private int lavaPlaceTicks;
     private LivingEntity forced;
 
+    private int gappleCount;
+    private int healPotionCount;
+    private int pearlCount;
+    private int crystalCount;
+    private int anchorCount;
+    private int webCount;
+    private int poisonCount;
+
     public BossCombat(PvpBossEntity boss) {
         this.boss = boss;
+        initCounts();
     }
+
+    public void initCounts() {
+        this.gappleCount = BossConfig.GAPPLE_COUNT.get();
+        this.healPotionCount = BossConfig.HEAL_POTION_COUNT.get();
+        this.pearlCount = BossConfig.PEARL_COUNT.get();
+        this.crystalCount = BossConfig.CRYSTAL_COUNT.get();
+        this.anchorCount = BossConfig.ANCHOR_COUNT.get();
+        this.webCount = BossConfig.WEB_COUNT.get();
+        this.poisonCount = BossConfig.POISON_COUNT.get();
+    }
+
+    public int getGappleCount() { return gappleCount; }
+    public void setGappleCount(int c) { this.gappleCount = Math.max(0, c); }
+    public int getHealPotionCount() { return healPotionCount; }
+    public void setHealPotionCount(int c) { this.healPotionCount = Math.max(0, c); }
+    public int getPearlCount() { return pearlCount; }
+    public void setPearlCount(int c) { this.pearlCount = Math.max(0, c); }
+    public int getCrystalCount() { return crystalCount; }
+    public void setCrystalCount(int c) { this.crystalCount = Math.max(0, c); }
+    public int getAnchorCount() { return anchorCount; }
+    public void setAnchorCount(int c) { this.anchorCount = Math.max(0, c); }
+    public int getWebCount() { return webCount; }
+    public void setWebCount(int c) { this.webCount = Math.max(0, c); }
+    public int getPoisonCount() { return poisonCount; }
+    public void setPoisonCount(int c) { this.poisonCount = Math.max(0, c); }
 
     public void forceTarget(LivingEntity target) {
         this.forced = target;
@@ -227,17 +261,21 @@ public class BossCombat {
         if (hpFrac > 0.38F && retreatTicks == 0) {
             return false;
         }
-        if (healCd > 0 && gappleCd > 0 && retreatTicks == 0) {
+        boolean canGapple = gappleCd == 0 && gappleCount > 0;
+        boolean canHeal = healCd == 0 && healPotionCount > 0;
+        if (!canGapple && !canHeal && retreatTicks == 0) {
             return false;
         }
         if (retreatTicks == 0) {
             retreatTicks = 35;
-            pearlAway(target);
+            if (pearlCount > 0) {
+                pearlAway(target);
+            }
             trySpeed();
         }
-        if (gappleCd == 0) {
+        if (canGapple) {
             drinkGapple();
-        } else if (healCd == 0) {
+        } else if (canHeal) {
             drinkHeals();
         }
         if (retreatTicks > 8) {
@@ -247,6 +285,8 @@ public class BossCombat {
     }
 
     private void drinkGapple() {
+        if (gappleCount <= 0) return;
+        gappleCount--;
         gappleCd = 120;
         boss.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 20 * 20, 1));
         boss.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 20 * 120, 3));
@@ -257,6 +297,8 @@ public class BossCombat {
     }
 
     private void drinkHeals() {
+        if (healPotionCount <= 0) return;
+        healPotionCount--;
         healCd = 45;
         boss.heal(16.0F);
         boss.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 20 * 22, 1));
@@ -276,21 +318,23 @@ public class BossCombat {
     }
 
     private void tryPearlToward(LivingEntity target) {
-        if (pearlCd > 0) {
+        if (pearlCd > 0 || pearlCount <= 0) {
             return;
         }
         Vec3 dest = findSafeNear(target.position(), 3.0, false);
         if (dest == null) {
             return;
         }
+        pearlCount--;
         pearlCd = 28;
         boss.teleportQuiet(dest.x, dest.y, dest.z);
     }
 
     private void pearlAway(LivingEntity target) {
-        if (pearlCd > 0 && pearlCd < 20) {
+        if ((pearlCd > 0 && pearlCd < 20) || pearlCount <= 0) {
             return;
         }
+        pearlCount--;
         Vec3 away = boss.position().subtract(target.position());
         if (away.lengthSqr() < 0.01) {
             away = new Vec3(boss.getRandom().nextGaussian(), 0, boss.getRandom().nextGaussian());
@@ -454,6 +498,10 @@ public class BossCombat {
     }
 
     private void throwPoison(LivingEntity target) {
+        if (poisonCount <= 0) {
+            return;
+        }
+        poisonCount--;
         poisonCd = 90;
         honeyTicks = 18;
         boss.lookAtFast(target);
@@ -474,11 +522,12 @@ public class BossCombat {
     }
 
     private void placeWebThenLava(LivingEntity target) {
-        if (!grief()) {
+        if (!grief() || webCount <= 0) {
             return;
         }
         BlockPos feet = target.blockPosition();
         if (placeIfReplaceable(feet, Blocks.COBWEB.defaultBlockState())) {
+            webCount--;
             webCd = 55;
             boss.playSound(SoundEvents.WOOL_PLACE, 1.0F, 0.8F);
             if (lavaCd == 0) {
@@ -490,6 +539,9 @@ public class BossCombat {
     }
 
     private boolean placeAndDetonateCrystal(LivingEntity target) {
+        if (crystalCount <= 0) {
+            return false;
+        }
         BlockPos base = findAdjacentFloor(target.blockPosition());
         if (base == null) {
             crystalCd = 10;
@@ -510,6 +562,7 @@ public class BossCombat {
         if (crystal == null) {
             return false;
         }
+        crystalCount--;
         crystal.moveTo(crystalPos.getX() + 0.5, crystalPos.getY(), crystalPos.getZ() + 0.5, 0, 0);
         crystal.setShowBottom(false);
         boss.level().addFreshEntity(crystal);
@@ -523,6 +576,9 @@ public class BossCombat {
     }
 
     private boolean placeAndDetonateAnchor(LivingEntity target) {
+        if (anchorCount <= 0) {
+            return false;
+        }
         BlockPos pos = findAdjacentFloor(target.blockPosition());
         if (pos == null) {
             anchorCd = 12;
@@ -532,6 +588,7 @@ public class BossCombat {
         if (!placeIfReplaceable(pos, charged) && !boss.level().getBlockState(pos).is(Blocks.RESPAWN_ANCHOR)) {
             return false;
         }
+        anchorCount--;
         boss.level().setBlock(pos, charged, 3);
         Vec3 center = Vec3.atCenterOf(pos);
         boss.level().explode(boss, center.x, center.y, center.z, 5.0F, true,

@@ -9,6 +9,13 @@ public final class BossConfig {
     public static final ForgeConfigSpec.ConfigValue<String> SKIN_USERNAME;
     public static final ForgeConfigSpec.IntValue MAX_HEALTH;
     public static final ForgeConfigSpec.IntValue TOTEM_COUNT;
+    public static final ForgeConfigSpec.IntValue GAPPLE_COUNT;
+    public static final ForgeConfigSpec.IntValue HEAL_POTION_COUNT;
+    public static final ForgeConfigSpec.IntValue PEARL_COUNT;
+    public static final ForgeConfigSpec.IntValue CRYSTAL_COUNT;
+    public static final ForgeConfigSpec.IntValue ANCHOR_COUNT;
+    public static final ForgeConfigSpec.IntValue WEB_COUNT;
+    public static final ForgeConfigSpec.IntValue POISON_COUNT;
     public static final ForgeConfigSpec.IntValue VILLAGER_KILLS_TO_SPAWN;
     public static final ForgeConfigSpec.BooleanValue REPEAT_SPAWN;
     public static final ForgeConfigSpec.IntValue FOLLOW_RANGE;
@@ -30,6 +37,20 @@ public final class BossConfig {
                 .defineInRange("maxHealth", 40, 20, 400);
         TOTEM_COUNT = b.comment("Totems of Undying the boss can pop")
                 .defineInRange("totemCount", 7, 0, 64);
+        GAPPLE_COUNT = b.comment("Enchanted golden apples the boss can eat")
+                .defineInRange("gappleCount", 320, 0, 100000);
+        HEAL_POTION_COUNT = b.comment("Healing potions the boss can drink")
+                .defineInRange("healPotionCount", 160, 0, 100000);
+        PEARL_COUNT = b.comment("Ender pearls the boss can throw/teleport")
+                .defineInRange("pearlCount", 320, 0, 100000);
+        CRYSTAL_COUNT = b.comment("End crystals the boss can place and detonate")
+                .defineInRange("crystalCount", 1280, 0, 100000);
+        ANCHOR_COUNT = b.comment("Respawn anchors the boss can place and detonate")
+                .defineInRange("anchorCount", 320, 0, 100000);
+        WEB_COUNT = b.comment("Cobwebs the boss can place")
+                .defineInRange("webCount", 320, 0, 100000);
+        POISON_COUNT = b.comment("Splash potions of poison the boss can throw")
+                .defineInRange("poisonCount", 80, 0, 100000);
         VILLAGER_KILLS_TO_SPAWN = b.comment("Villagers a player must kill to summon the boss")
                 .defineInRange("villagerKillsToSpawn", 10, 1, 1000);
         REPEAT_SPAWN = b.comment("If true, every N villager kills summons another boss")

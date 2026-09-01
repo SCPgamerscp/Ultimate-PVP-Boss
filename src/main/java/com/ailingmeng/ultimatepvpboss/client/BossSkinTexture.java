@@ -41,8 +41,13 @@ public final class BossSkinTexture {
     private static void download(String key, String username) {
         ResourceLocation loc = new ResourceLocation(UltimatePvpBoss.MOD_ID, "skins/" + sanitize(key));
         try {
-            String encoded = URLEncoder.encode(username, StandardCharsets.UTF_8);
-            URI uri = URI.create("https://mc-heads.net/skin/" + encoded);
+            URI uri;
+            if (username.startsWith("http://") || username.startsWith("https://")) {
+                uri = URI.create(username);
+            } else {
+                String encoded = URLEncoder.encode(username, StandardCharsets.UTF_8);
+                uri = URI.create("https://mc-heads.net/skin/" + encoded);
+            }
             try (InputStream in = uri.toURL().openStream()) {
                 NativeImage image = NativeImage.read(in);
                 Minecraft.getInstance().execute(() -> {
@@ -63,6 +68,9 @@ public final class BossSkinTexture {
     }
 
     private static String sanitize(String key) {
+        if (key.startsWith("http://") || key.startsWith("https://")) {
+            return "url_" + Integer.toHexString(key.hashCode());
+        }
         return key.replaceAll("[^a-z0-9_\\-]", "_");
     }
 }

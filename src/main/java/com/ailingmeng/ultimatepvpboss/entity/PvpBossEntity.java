@@ -98,6 +98,7 @@ public class PvpBossEntity extends PathfinderMob {
         this.setHealth(this.getMaxHealth());
         this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(BossConfig.FOLLOW_RANGE.get());
         this.setTotemsLeft(BossConfig.TOTEM_COUNT.get());
+        this.combat.initCounts();
         this.setSkinUsername(BossConfig.SKIN_USERNAME.get());
         this.setCustomName(Component.literal(BossConfig.BOSS_NAME.get()));
         this.bossEvent.setName(this.getDisplayName());
@@ -302,6 +303,13 @@ public class PvpBossEntity extends PathfinderMob {
         tag.putInt("TotemsLeft", getTotemsLeft());
         tag.putBoolean("HalfBuffs", halfBuffsUsed);
         tag.putBoolean("Slim", isSlimSkin());
+        tag.putInt("GappleCount", combat.getGappleCount());
+        tag.putInt("HealPotionCount", combat.getHealPotionCount());
+        tag.putInt("PearlCount", combat.getPearlCount());
+        tag.putInt("CrystalCount", combat.getCrystalCount());
+        tag.putInt("AnchorCount", combat.getAnchorCount());
+        tag.putInt("WebCount", combat.getWebCount());
+        tag.putInt("PoisonCount", combat.getPoisonCount());
     }
 
     @Override
@@ -315,6 +323,13 @@ public class PvpBossEntity extends PathfinderMob {
         }
         halfBuffsUsed = tag.getBoolean("HalfBuffs");
         setSlimSkin(tag.getBoolean("Slim"));
+        if (tag.contains("GappleCount")) combat.setGappleCount(tag.getInt("GappleCount"));
+        if (tag.contains("HealPotionCount")) combat.setHealPotionCount(tag.getInt("HealPotionCount"));
+        if (tag.contains("PearlCount")) combat.setPearlCount(tag.getInt("PearlCount"));
+        if (tag.contains("CrystalCount")) combat.setCrystalCount(tag.getInt("CrystalCount"));
+        if (tag.contains("AnchorCount")) combat.setAnchorCount(tag.getInt("AnchorCount"));
+        if (tag.contains("WebCount")) combat.setWebCount(tag.getInt("WebCount"));
+        if (tag.contains("PoisonCount")) combat.setPoisonCount(tag.getInt("PoisonCount"));
         this.bossEvent.setName(this.getDisplayName());
         this.equipped = true;
     }

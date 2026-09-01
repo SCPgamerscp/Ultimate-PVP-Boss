@@ -1,0 +1,15 @@
+{
+  "entity.ultimatepvpboss.pvp_boss": "PvP Champion",
+  "item.ultimatepvpboss.pvp_boss_spawn_egg": "PvP Champion Spawn Egg",
+  "itemGroup.ultimatepvpboss": "Ultimate PVP Boss",
+  "command.ultimatepvpboss.spawned": "Spawned %s.",
+  "command.ultimatepvpboss.none": "No PvP boss is loaded in this world.",
+  "command.ultimatepvpboss.named": "Boss name set to %s.",
+  "command.ultimatepvpboss.skin": "Boss skin set to %s.",
+  "command.ultimatepvpboss.removed": "Removed %s PvP boss(es).",
+  "command.ultimatepvpboss.kills": "%s villager kills: %s / %s.",
+  "message.ultimatepvpboss.awakened": "%s slew ten villagers. %s has entered the world.",
+  "message.ultimatepvpboss.fallen": "%s has fallen. The champion's hoard is yours.",
+  "message.ultimatepvpboss.totem": "%s used a Totem of Undying (%s remaining).",
+  "config.ultimatepvpboss.title": "Ultimate PVP Boss"
+}

@@ -27,6 +27,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -34,6 +35,7 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class PvpBossEntity extends PathfinderMob {
     private static final EntityDataAccessor<String> SKIN =
@@ -112,6 +114,18 @@ public class PvpBossEntity extends PathfinderMob {
             this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
             this.bossEvent.setName(this.getDisplayName());
             this.combat.tick();
+            cleanupLoyaltyTridents();
+        }
+    }
+
+    private void cleanupLoyaltyTridents() {
+        List<ThrownTrident> tridents = this.level().getEntitiesOfClass(ThrownTrident.class, this.getBoundingBox().inflate(2.0D),
+                t -> t.getOwner() == this);
+        for (ThrownTrident t : tridents) {
+            if (t.tickCount > 10) {
+                this.playSound(SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
+                t.discard();
+            }
         }
     }
 

@@ -438,6 +438,7 @@ public class BossCombat {
         Vec3 aim = predict(target, start, 2.5F);
         Vec3 dir = aim.subtract(start).normalize();
         trident.shoot(dir.x, dir.y, dir.z, 2.6F, 0.3F);
+        trident.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
         boss.level().addFreshEntity(trident);
         boss.playSound(SoundEvents.TRIDENT_THROW, 1.0F, 1.0F);
         boss.swing(InteractionHand.MAIN_HAND);

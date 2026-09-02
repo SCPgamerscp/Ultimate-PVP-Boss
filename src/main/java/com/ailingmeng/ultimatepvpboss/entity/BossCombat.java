@@ -60,6 +60,8 @@ public class BossCombat {
     private int terrainCd;
     private BlockPos pendingLava;
     private int lavaPlaceTicks;
+    private EndCrystal pendingCrystal;
+    private int crystalDetonateTicks;
     private LivingEntity forced;
 
     private int gappleCount;
@@ -117,6 +119,13 @@ public class BossCombat {
                 placeIfReplaceable(pendingLava, Blocks.LAVA.defaultBlockState());
             }
             pendingLava = null;
+        }
+        if (pendingCrystal != null && crystalDetonateTicks == 0) {
+            if (pendingCrystal.isAlive() && !pendingCrystal.isRemoved()) {
+                pendingCrystal.hurt(boss.damageSources().mobAttack(boss), 1.0F);
+                boss.swing(InteractionHand.MAIN_HAND);
+            }
+            pendingCrystal = null;
         }
 
         LivingEntity target = selectTarget(level);
@@ -226,6 +235,7 @@ public class BossCombat {
         if (honeyTicks > 0) honeyTicks--;
         if (retreatTicks > 0) retreatTicks--;
         if (lavaPlaceTicks > 0) lavaPlaceTicks--;
+        if (crystalDetonateTicks > 0) crystalDetonateTicks--;
         if (terrainCd > 0) terrainCd--;
         if (critJumpTicks > 0) critJumpTicks--;
         if (strafeFlip++ > 40) {
@@ -581,11 +591,8 @@ public class BossCombat {
         crystal.setShowBottom(false);
         boss.level().addFreshEntity(crystal);
         crystalCd = 28;
-        double selfDist = boss.distanceTo(crystal);
-        double theirDist = target.distanceTo(crystal);
-        if (selfDist > 2.0 && theirDist < 5.5) {
-            crystal.hurt(boss.damageSources().mobAttack(boss), 1.0F);
-        }
+        this.pendingCrystal = crystal;
+        this.crystalDetonateTicks = 1;
         return true;
     }
 

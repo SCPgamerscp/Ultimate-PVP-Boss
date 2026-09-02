@@ -39,8 +39,8 @@ Creative / Admin test: `/pvpboss spawn`
 
 - **Player Movement**: Movement speed and sprinting multipliers match vanilla player physics.
 - **Realistic Placement Reach (≤ 4.5m)**:
-  - **Crystal PvP**: Places obsidian and End Crystals adjacent to the player, detonating with proper spacing.
-  - **Anchor PvP**: Places and immediately overcharges Respawn Anchors for explosive bursts.
+  - **Crystal PvP**: Places obsidian and End Crystals adjacent to the player, instantly deploying an **Obsidian Blast Shield** between the boss and the crystal to block blast waves (eliminating self-damage).
+  - **Anchor PvP**: Places and immediately overcharges Respawn Anchors with an **Obsidian Blast Shield** protecting the boss from the explosion.
   - **Web & Lava Combo**: Traps target's feet in cobweb followed by lava placement.
   - **Shield Counter**: Instantly swaps to Netherite Axe to disable blocking shields.
   - **Melee Crits & Strafe**: Jump critical hits with sword, circling and strafing around the target.
@@ -136,8 +136,8 @@ Minecraft **Forge 1.20.1** 用Mod。プレイヤー型スキン、専用ボス�
 
 - **プレイヤー準拠の移動速度**: バニラプレイヤーの歩行・ダッシュ速度と完全に同等。
 - **インファイト設置リーチ（4.5m以内）**:
-  - **クリスタルPvP**: 黒曜石とエンドクリスタルを相手の足元に設置し、安全距離を確保して即座に起爆。
-  - **アンカーPvP**: リスポーンアンカーを設置し、最大チャージして大爆破。
+  - **クリスタルPvP**: 黒曜石とエンドクリスタルを相手の足元に設置し、自身とクリスタルの間に**黒曜石シールドを瞬時に配置して爆風を遮断（自爆ダメージを完全カット）**しながら起爆。
+  - **アンカーPvP**: リスポーンアンカー設置時も**黒曜石シールド**で自身を保護しつつ最大チャージして大爆破。
   - **クモの巣＆マグマトラップ**: 足元をクモの巣で拘束した直後にマグマを流し込むコンボ。
   - **盾割り攻撃**: プレイヤーが盾を構えた瞬間に斧に持ち替えて盾を無効化。
   - **ジャンプクリティカル＆回り込み**: 剣でのジャンプクリティカルヒットやサークルストレイフ（左右ステップ）。

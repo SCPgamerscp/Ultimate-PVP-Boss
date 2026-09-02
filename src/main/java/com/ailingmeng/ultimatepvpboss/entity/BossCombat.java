@@ -178,11 +178,21 @@ public class BossCombat {
                 }
                 circleStrafe(target);
             } else {
+                if (blocking) {
+                    boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, BossGear.axe());
+                }
                 boss.getNavigation().moveTo(target, 1.3);
             }
         } else {
-            if (blocking && burstCd == 0) {
-                startCrossbowBurst(target);
+            if (blocking) {
+                if (burstCd == 0) {
+                    startCrossbowBurst(target);
+                } else {
+                    boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, BossGear.axe());
+                    if (dist > 8) {
+                        tryPearlToward(target);
+                    }
+                }
             } else {
                 if (tridentCd == 0 && dist < 28) {
                     startTridentVolley();
@@ -190,9 +200,9 @@ public class BossCombat {
                 if (bowCd == 0) {
                     fireBow(target);
                 }
-            }
-            if (dist > 14) {
-                tryPearlToward(target);
+                if (dist > 14) {
+                    tryPearlToward(target);
+                }
             }
             boss.getNavigation().moveTo(target, 1.3);
         }

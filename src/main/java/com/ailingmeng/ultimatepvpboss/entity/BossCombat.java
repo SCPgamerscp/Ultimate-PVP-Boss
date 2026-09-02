@@ -73,6 +73,7 @@ public class BossCombat {
     private int anchorCount;
     private int webCount;
     private int poisonCount;
+    private int honeyCount;
 
     public BossCombat(PvpBossEntity boss) {
         this.boss = boss;
@@ -87,6 +88,7 @@ public class BossCombat {
         this.anchorCount = BossConfig.ANCHOR_COUNT.get();
         this.webCount = BossConfig.WEB_COUNT.get();
         this.poisonCount = BossConfig.POISON_COUNT.get();
+        this.honeyCount = BossConfig.HONEY_COUNT.get();
     }
 
     public int getGappleCount() { return gappleCount; }
@@ -103,6 +105,8 @@ public class BossCombat {
     public void setWebCount(int c) { this.webCount = Math.max(0, c); }
     public int getPoisonCount() { return poisonCount; }
     public void setPoisonCount(int c) { this.poisonCount = Math.max(0, c); }
+    public int getHoneyCount() { return honeyCount; }
+    public void setHoneyCount(int c) { this.honeyCount = Math.max(0, c); }
 
     public void forceTarget(LivingEntity target) {
         this.forced = target;
@@ -113,6 +117,9 @@ public class BossCombat {
             return;
         }
         tickCooldowns();
+        if (boss.hasEffect(MobEffects.POISON) && honeyTicks == 0 && honeyCount > 0) {
+            honeyTicks = 15;
+        }
         if (honeyTicks == 1) {
             drinkHoney();
         }
@@ -548,8 +555,13 @@ public class BossCombat {
     }
 
     private void drinkHoney() {
+        if (honeyCount <= 0) {
+            return;
+        }
+        honeyCount--;
         boss.removeEffect(MobEffects.POISON);
         boss.playSound(SoundEvents.HONEY_DRINK, 1.0F, 1.0F);
+        boss.swing(InteractionHand.MAIN_HAND);
     }
 
     private void placeWebThenLava(LivingEntity target) {

@@ -324,6 +324,7 @@ public class PvpBossEntity extends PathfinderMob {
         tag.putInt("AnchorCount", combat.getAnchorCount());
         tag.putInt("WebCount", combat.getWebCount());
         tag.putInt("PoisonCount", combat.getPoisonCount());
+        tag.putInt("HoneyCount", combat.getHoneyCount());
     }
 
     @Override
@@ -344,6 +345,7 @@ public class PvpBossEntity extends PathfinderMob {
         if (tag.contains("AnchorCount")) combat.setAnchorCount(tag.getInt("AnchorCount"));
         if (tag.contains("WebCount")) combat.setWebCount(tag.getInt("WebCount"));
         if (tag.contains("PoisonCount")) combat.setPoisonCount(tag.getInt("PoisonCount"));
+        if (tag.contains("HoneyCount")) combat.setHoneyCount(tag.getInt("HoneyCount"));
         this.bossEvent.setName(this.getDisplayName());
         this.equipped = true;
     }

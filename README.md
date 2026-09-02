@@ -63,10 +63,11 @@ Just like a real player, the boss has a finite inventory of supplies. When exhau
 - **Enchanted Golden Apples**: 320
 - **Healing Potions**: 160
 - **Ender Pearls**: 320
-- **End Crystals**: 1280
+- **End Crystals**: 280
 - **Respawn Anchors**: 320
 - **Cobwebs**: 320
 - **Poison Splash Potions**: 80
+- **Honey Bottles**: 80 (cures poison)
 
 *Item counts are saved in NBT across world reloads and fully customizable in the config.*
 
@@ -109,7 +110,7 @@ All preferences are automatically saved in `config/ultimatepvpboss-common.toml`.
 - `skinUsername`: Minecraft username or direct image URL (http:// or https://) for skin
 - `maxHealth`: Max health (default 40.0)
 - `totemCount`: Number of Totems of Undying (default 7)
-- `gappleCount`, `healPotionCount`, `pearlCount`, `crystalCount`, `anchorCount`, `webCount`, `poisonCount`: Finite consumable limits
+- `gappleCount`, `healPotionCount`, `pearlCount`, `crystalCount`, `anchorCount`, `webCount`, `poisonCount`, `honeyCount`: Finite consumable limits
 - `villagerKillsToSpawn`: Villagers needed to summon the boss (default 10)
 - `repeatSpawn`: Spawn every N kills repeatedly
 - `followRange`: Target hunting range (default 128 blocks)
@@ -177,10 +178,11 @@ Minecraft **Forge 1.20.1** 用Mod。プレイヤー型スキン、専用ボス�
 - **エンチャント金リンゴ**: 320 個
 - **治癒ポーション**: 160 個
 - **エンダーパール**: 320 個
-- **エンドクリスタル**: 1280 個
+- **エンドクリスタル**: 280 個
 - **リスポーンアンカー**: 320 個
 - **蜘蛛の巣**: 320 個
 - **毒ポーション**: 80 個
+- **ハチミツ入り瓶**: 80 個（毒の解毒用）
 
 *各残数はワールド再読み込み時も保存され、コンフィグから自由に設定可能です。*
 
@@ -223,7 +225,7 @@ Minecraft **Forge 1.20.1** 用Mod。プレイヤー型スキン、専用ボス�
 - `skinUsername`: スキン用のプレイヤー名または画像URL (http:// または https://)
 - `maxHealth`: 最大体力（初期値 40.0）
 - `totemCount`: トーテムの所持数（初期値 7）
-- `gappleCount`, `pearlCount`, `crystalCount` 等: 各アイテムの所持上限数
+- `gappleCount`, `pearlCount`, `crystalCount`, `honeyCount` 等: 各アイテムの所持上限数
 - `villagerKillsToSpawn`: 出現に必要な村人討伐数（初期値 10）
 - `allowGrief`: ブロック設置・破壊・爆破の許可
 - `gappleReward`, `diamondBlockReward`: 勝利チェストの報酬数

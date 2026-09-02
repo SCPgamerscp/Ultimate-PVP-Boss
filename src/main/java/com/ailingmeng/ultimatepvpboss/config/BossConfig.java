@@ -18,6 +18,7 @@ public final class BossConfig {
     public static final ForgeConfigSpec.IntValue ANCHOR_COUNT;
     public static final ForgeConfigSpec.IntValue WEB_COUNT;
     public static final ForgeConfigSpec.IntValue POISON_COUNT;
+    public static final ForgeConfigSpec.IntValue HONEY_COUNT;
     public static final ForgeConfigSpec.IntValue VILLAGER_KILLS_TO_SPAWN;
     public static final ForgeConfigSpec.BooleanValue REPEAT_SPAWN;
     public static final ForgeConfigSpec.IntValue FOLLOW_RANGE;
@@ -50,13 +51,15 @@ public final class BossConfig {
         PEARL_COUNT = b.comment("Ender pearls the boss can throw/teleport")
                 .defineInRange("pearlCount", 320, 0, 100000);
         CRYSTAL_COUNT = b.comment("End crystals the boss can place and detonate")
-                .defineInRange("crystalCount", 1280, 0, 100000);
+                .defineInRange("crystalCount", 280, 0, 100000);
         ANCHOR_COUNT = b.comment("Respawn anchors the boss can place and detonate")
                 .defineInRange("anchorCount", 320, 0, 100000);
         WEB_COUNT = b.comment("Cobwebs the boss can place")
                 .defineInRange("webCount", 320, 0, 100000);
         POISON_COUNT = b.comment("Splash potions of poison the boss can throw")
                 .defineInRange("poisonCount", 80, 0, 100000);
+        HONEY_COUNT = b.comment("Honey bottles the boss can drink to cure poison")
+                .defineInRange("honeyCount", 80, 0, 100000);
         VILLAGER_KILLS_TO_SPAWN = b.comment("Villagers a player must kill to summon the boss")
                 .defineInRange("villagerKillsToSpawn", 10, 1, 1000);
         REPEAT_SPAWN = b.comment("If true, every N villager kills summons another boss")

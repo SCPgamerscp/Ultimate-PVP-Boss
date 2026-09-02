@@ -558,6 +558,10 @@ public class BossCombat {
         if (!boss.level().getBlockState(crystalPos).isAir()) {
             return false;
         }
+
+        // Place obsidian shield between boss and crystal to block blast waves (PvP Shielding)
+        placeShieldBetween(boss.blockPosition(), crystalPos);
+
         EndCrystal crystal = EntityType.END_CRYSTAL.create(boss.level());
         if (crystal == null) {
             return false;
@@ -569,7 +573,7 @@ public class BossCombat {
         crystalCd = 28;
         double selfDist = boss.distanceTo(crystal);
         double theirDist = target.distanceTo(crystal);
-        if (selfDist > 3.2 && theirDist < 5.5) {
+        if (selfDist > 2.0 && theirDist < 5.5) {
             crystal.hurt(boss.damageSources().mobAttack(boss), 1.0F);
         }
         return true;
@@ -588,6 +592,10 @@ public class BossCombat {
         if (!placeIfReplaceable(pos, charged) && !boss.level().getBlockState(pos).is(Blocks.RESPAWN_ANCHOR)) {
             return false;
         }
+
+        // Place obsidian shield between boss and anchor to block blast waves
+        placeShieldBetween(boss.blockPosition(), pos);
+
         anchorCount--;
         boss.level().setBlock(pos, charged, 3);
         Vec3 center = Vec3.atCenterOf(pos);
@@ -596,6 +604,19 @@ public class BossCombat {
         boss.level().removeBlock(pos, false);
         anchorCd = 48;
         return true;
+    }
+
+    private void placeShieldBetween(BlockPos bossPos, BlockPos hazardPos) {
+        if (!grief()) {
+            return;
+        }
+        int dx = hazardPos.getX() - bossPos.getX();
+        int dz = hazardPos.getZ() - bossPos.getZ();
+        Direction dir = Direction.getNearest(dx, 0, dz);
+        BlockPos shieldPos = bossPos.relative(dir);
+        if (!shieldPos.equals(hazardPos) && !shieldPos.equals(hazardPos.below())) {
+            placeIfReplaceable(shieldPos, Blocks.OBSIDIAN.defaultBlockState());
+        }
     }
 
     @javax.annotation.Nullable

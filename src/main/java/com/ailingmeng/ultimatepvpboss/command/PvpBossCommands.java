@@ -1,6 +1,7 @@
 package com.ailingmeng.ultimatepvpboss.command;
 
 import com.ailingmeng.ultimatepvpboss.config.BossConfig;
+import com.ailingmeng.ultimatepvpboss.entity.BossCombat;
 import com.ailingmeng.ultimatepvpboss.entity.PvpBossEntity;
 import com.ailingmeng.ultimatepvpboss.event.ModEvents;
 import com.mojang.brigadier.CommandDispatcher;
@@ -72,6 +73,8 @@ public final class PvpBossCommands {
                                 .executes(PvpBossCommands::killsResetSelf)
                                 .then(Commands.argument("player", EntityArgument.player())
                                         .executes(PvpBossCommands::killsResetOther))))
+                .then(Commands.literal("items")
+                        .executes(PvpBossCommands::items))
                 .then(Commands.literal("remove")
                         .executes(PvpBossCommands::remove))
                 .then(Commands.literal("kills")
@@ -237,6 +240,38 @@ public final class PvpBossCommands {
         }
         ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.skin_reset"), true);
         return Math.max(1, bosses.size());
+    }
+
+    private static int items(CommandContext<CommandSourceStack> ctx) {
+        List<PvpBossEntity> bosses = bossesNear(ctx);
+        if (!bosses.isEmpty()) {
+            PvpBossEntity boss = bosses.get(0);
+            BossCombat combat = boss.getCombat();
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_header", boss.getDisplayName()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_totem", boss.getTotemsLeft()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_gapple", combat.getGappleCount()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_heal", combat.getHealPotionCount()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_pearl", combat.getPearlCount()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_crystal", combat.getCrystalCount()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_anchor", combat.getAnchorCount()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_web", combat.getWebCount()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_poison", combat.getPoisonCount()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_honey", combat.getHoneyCount()), false);
+            ctx.getSource().sendSuccess(() -> Component.literal("§7=================================="), false);
+        } else {
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_header_default"), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_totem", BossConfig.TOTEM_COUNT.get()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_gapple", BossConfig.GAPPLE_COUNT.get()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_heal", BossConfig.HEAL_POTION_COUNT.get()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_pearl", BossConfig.PEARL_COUNT.get()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_crystal", BossConfig.CRYSTAL_COUNT.get()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_anchor", BossConfig.ANCHOR_COUNT.get()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_web", BossConfig.WEB_COUNT.get()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_poison", BossConfig.POISON_COUNT.get()), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.items_honey", BossConfig.HONEY_COUNT.get()), false);
+            ctx.getSource().sendSuccess(() -> Component.literal("§7=================================="), false);
+        }
+        return 1;
     }
 
     private static int remove(CommandContext<CommandSourceStack> ctx) {

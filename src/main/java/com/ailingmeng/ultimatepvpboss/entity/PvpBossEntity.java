@@ -118,6 +118,10 @@ public class PvpBossEntity extends PathfinderMob {
         return this.bossEvent;
     }
 
+    public BossCombat getCombat() {
+        return this.combat;
+    }
+
     @Override
     public void tick() {
         super.tick();

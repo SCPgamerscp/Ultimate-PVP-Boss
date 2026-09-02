@@ -90,6 +90,7 @@ On victory, a chest drops containing **1,000 Enchanted Golden Apples** and **200
 | `/pvpboss reset [skin\|name\|bar\|kills\|all]` | General reset command |
 | `/pvpboss kills [player]` | Check villager kill progress |
 | `/pvpboss kills reset [player]` | Reset villager kill progress to 0 |
+| `/pvpboss items` | View remaining finite supplies of the boss |
 | `/pvpboss remove` | Remove/despawn nearby bosses |
 
 ## Custom Skins, Names & Boss Bar
@@ -205,6 +206,7 @@ Minecraft **Forge 1.20.1** 用Mod。プレイヤー型スキン、専用ボス�
 | `/pvpboss reset [skin\|name\|bar\|kills\|all]` | 総合リセットコマンド |
 | `/pvpboss kills [プレイヤー名]` | 村人討伐数を確認 |
 | `/pvpboss kills reset [プレイヤー名]` | 村人討伐カウントを 0 にリセット |
+| `/pvpboss items` | ボスの残り消耗品アイテム数を一覧表示 |
 | `/pvpboss remove` | 近くのボスを消去 |
 
 ## スキン・名前・ボスバーのカスタマイズ

@@ -99,6 +99,7 @@ You can customize the champion's skin, display name, and boss bar using in-game 
 - **Name**: `/pvpboss name <name>` (supports standard Minecraft color codes with `&`, e.g. `/pvpboss name &c&lPvP King`)
 - **Boss Bar**: `/pvpboss bar color PURPLE`, `/pvpboss bar style NOTCHED_20`
 - **Reset**: `/pvpboss reset all` or `/pvpboss skin reset`, `/pvpboss name reset`, `/pvpboss bar reset`
+- **Tab Completion**: Pressing `Tab` after `/pvpboss skin `, `/pvpboss name `, or `/pvpboss bar ` automatically suggests **online player names** and available bar options for instant selection!
 
 All preferences are automatically saved in `config/ultimatepvpboss-common.toml`.
 
@@ -212,6 +213,7 @@ Minecraft **Forge 1.20.1** 用Mod。プレイヤー型スキン、専用ボス�
 - **名前の変更**: `/pvpboss name <名前>`（`&c&lPvP King` のように `&` カラーコードも自動変換）
 - **ボスバーの変更**: `/pvpboss bar color PURPLE`, `/pvpboss bar style NOTCHED_20`
 - **一括リセット**: `/pvpboss reset all`（スキン・名前・ボスバー・キル数を初期化）
+- **便利なTab補完**: コマンド入力時に `Tab` キーを押すと、**現在ログインしているプレイヤー名一覧**や利用可能な色・スタイルが候補表示され、キーボードで素早く選択できます！
 
 設定内容は `config/ultimatepvpboss-common.toml` に自動的に永続保存されます。
 

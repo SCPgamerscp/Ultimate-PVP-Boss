@@ -62,6 +62,8 @@ public class BossCombat {
     private int lavaPlaceTicks;
     private EndCrystal pendingCrystal;
     private int crystalDetonateTicks;
+    private BlockPos pendingAnchor;
+    private int anchorDetonateTicks;
     private LivingEntity forced;
 
     private int gappleCount;
@@ -126,6 +128,14 @@ public class BossCombat {
                 boss.swing(InteractionHand.MAIN_HAND);
             }
             pendingCrystal = null;
+        }
+        if (pendingAnchor != null && anchorDetonateTicks == 0) {
+            Vec3 center = Vec3.atCenterOf(pendingAnchor);
+            boss.level().explode(boss, center.x, center.y, center.z, 5.0F, true,
+                    net.minecraft.world.level.Level.ExplosionInteraction.BLOCK);
+            boss.level().removeBlock(pendingAnchor, false);
+            boss.swing(InteractionHand.MAIN_HAND);
+            pendingAnchor = null;
         }
 
         LivingEntity target = selectTarget(level);
@@ -236,6 +246,7 @@ public class BossCombat {
         if (retreatTicks > 0) retreatTicks--;
         if (lavaPlaceTicks > 0) lavaPlaceTicks--;
         if (crystalDetonateTicks > 0) crystalDetonateTicks--;
+        if (anchorDetonateTicks > 0) anchorDetonateTicks--;
         if (terrainCd > 0) terrainCd--;
         if (critJumpTicks > 0) critJumpTicks--;
         if (strafeFlip++ > 40) {
@@ -615,10 +626,8 @@ public class BossCombat {
 
         anchorCount--;
         boss.level().setBlock(pos, charged, 3);
-        Vec3 center = Vec3.atCenterOf(pos);
-        boss.level().explode(boss, center.x, center.y, center.z, 5.0F, true,
-                net.minecraft.world.level.Level.ExplosionInteraction.BLOCK);
-        boss.level().removeBlock(pos, false);
+        this.pendingAnchor = pos;
+        this.anchorDetonateTicks = 1;
         anchorCd = 48;
         return true;
     }

@@ -185,16 +185,10 @@ public class BossCombat {
         }
 
         if (dist <= 4.5) {
-            if (poisonCd == 0 && dist < 3.2) {
+            if (poisonCd == 0 && dist < 3.2 && poisonCount > 0) {
                 throwPoison(target);
             }
-            if (crystalCd == 0 && grief()) {
-                placeAndDetonateCrystal(target);
-            } else if (anchorCd == 0 && grief()) {
-                placeAndDetonateAnchor(target);
-            } else if (webCd == 0 && grief()) {
-                placeWebThenLava(target);
-            }
+            handleDeployables(target);
 
             if (dist <= 3.7) {
                 if (blocking && axeCd == 0) {
@@ -562,6 +556,25 @@ public class BossCombat {
         boss.removeEffect(MobEffects.POISON);
         boss.playSound(SoundEvents.HONEY_DRINK, 1.0F, 1.0F);
         boss.swing(InteractionHand.MAIN_HAND);
+    }
+
+    private void handleDeployables(LivingEntity target) {
+        if (!grief()) {
+            return;
+        }
+        if (crystalCount > 0 && crystalCd == 0) {
+            if (placeAndDetonateCrystal(target)) {
+                return;
+            }
+        }
+        if (anchorCount > 0 && anchorCd == 0) {
+            if (placeAndDetonateAnchor(target)) {
+                return;
+            }
+        }
+        if (webCount > 0 && webCd == 0) {
+            placeWebThenLava(target);
+        }
     }
 
     private void placeWebThenLava(LivingEntity target) {

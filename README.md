@@ -79,8 +79,9 @@ On victory, a chest drops containing **1,000 Enchanted Golden Apples** and **200
 | Command | Effect |
 | --- | --- |
 | `/pvpboss spawn [player]` | Summon the boss near you or specified player |
-| `/pvpboss name <name>` | Change display name of nearby boss |
-| `/pvpboss skin <username\|url>` | Apply skin from Minecraft username or direct PNG image URL (`http://`, `https://`) |
+| `/pvpboss name <name>` | Change display name of boss (saved for future spawns) |
+| `/pvpboss skin <username\|url>` | Apply skin from Minecraft username or direct PNG image URL (`http://`, `https://`) (saved for future spawns) |
+| `/pvpboss skin reset` | Reset boss skin to default (Steve) |
 | `/pvpboss remove` | Remove/despawn nearby bosses |
 | `/pvpboss kills [player]` | Check villager kill progress |
 
@@ -174,8 +175,9 @@ Minecraft **Forge 1.20.1** 用Mod。プレイヤー型スキン、専用ボス�
 | コマンド | 効果 |
 | --- | --- |
 | `/pvpboss spawn [プレイヤー名]` | ボスを召喚 |
-| `/pvpboss name <名前>` | 近くのボスの表示名を変更 |
-| `/pvpboss skin <ユーザー名\|画像URL>` | スキンをMinecraftユーザー名または直接の画像URL（`http://`, `https://`）に変更 |
+| `/pvpboss name <名前>` | ボスの表示名を変更（次回以降のスポーンにも保存） |
+| `/pvpboss skin <ユーザー名\|画像URL>` | スキンをMinecraftユーザー名または直接の画像URL（`http://`, `https://`）に変更（次回以降のスポーンにも保存） |
+| `/pvpboss skin reset` | ボスのスキンをデフォルト（Steve）にリセット |
 | `/pvpboss remove` | 近くのボスを消去 |
 | `/pvpboss kills [プレイヤー名]` | 村人討伐数を確認 |
 

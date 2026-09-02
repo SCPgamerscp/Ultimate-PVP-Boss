@@ -31,7 +31,7 @@ public final class BossConfig {
         b.push("boss");
         BOSS_NAME = b.comment("Default display name. Change in-game with /pvpboss name")
                 .define("bossName", "The Legend");
-        SKIN_USERNAME = b.comment("Minecraft username used for the player skin")
+        SKIN_USERNAME = b.comment("Minecraft username or direct image URL (http:// or https://) for the player skin")
                 .define("skinUsername", "Steve");
         MAX_HEALTH = b.comment("Max health. A real player is 20. Legendary default is 40 plus 7 totems.")
                 .defineInRange("maxHealth", 40, 20, 400);

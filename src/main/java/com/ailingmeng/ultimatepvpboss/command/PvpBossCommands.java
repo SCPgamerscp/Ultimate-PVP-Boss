@@ -31,7 +31,9 @@ public final class PvpBossCommands {
                         .then(Commands.argument("name", StringArgumentType.greedyString())
                                 .executes(PvpBossCommands::rename)))
                 .then(Commands.literal("skin")
-                        .then(Commands.argument("username", StringArgumentType.word())
+                        .then(Commands.literal("reset")
+                                .executes(PvpBossCommands::skinReset))
+                        .then(Commands.argument("username", StringArgumentType.greedyString())
                                 .executes(PvpBossCommands::skin)))
                 .then(Commands.literal("remove")
                         .executes(PvpBossCommands::remove))
@@ -66,31 +68,43 @@ public final class PvpBossCommands {
 
     private static int rename(CommandContext<CommandSourceStack> ctx) {
         String name = StringArgumentType.getString(ctx, "name");
+        BossConfig.BOSS_NAME.set(name);
         List<PvpBossEntity> bosses = bossesNear(ctx);
-        if (bosses.isEmpty()) {
-            ctx.getSource().sendFailure(Component.translatable("command.ultimatepvpboss.none"));
-            return 0;
-        }
         for (PvpBossEntity boss : bosses) {
             boss.setCustomName(Component.literal(name));
             boss.setCustomNameVisible(true);
         }
         ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.named", name), true);
-        return bosses.size();
+        return Math.max(1, bosses.size());
     }
 
     private static int skin(CommandContext<CommandSourceStack> ctx) {
         String username = StringArgumentType.getString(ctx, "username");
-        List<PvpBossEntity> bosses = bossesNear(ctx);
-        if (bosses.isEmpty()) {
-            ctx.getSource().sendFailure(Component.translatable("command.ultimatepvpboss.none"));
-            return 0;
+        if (username.equalsIgnoreCase("reset") || username.equalsIgnoreCase("default")) {
+            return skinReset(ctx);
         }
+        BossConfig.SKIN_USERNAME.set(username);
+        List<PvpBossEntity> bosses = bossesNear(ctx);
         for (PvpBossEntity boss : bosses) {
             boss.setSkinUsername(username);
         }
-        ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.skin", username), true);
-        return bosses.size();
+        if (bosses.isEmpty()) {
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.skin_saved", username), true);
+        } else {
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.skin", username), true);
+        }
+        return Math.max(1, bosses.size());
+    }
+
+    private static int skinReset(CommandContext<CommandSourceStack> ctx) {
+        String def = "Steve";
+        BossConfig.SKIN_USERNAME.set(def);
+        List<PvpBossEntity> bosses = bossesNear(ctx);
+        for (PvpBossEntity boss : bosses) {
+            boss.setSkinUsername(def);
+        }
+        ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.skin_reset"), true);
+        return Math.max(1, bosses.size());
     }
 
     private static int remove(CommandContext<CommandSourceStack> ctx) {

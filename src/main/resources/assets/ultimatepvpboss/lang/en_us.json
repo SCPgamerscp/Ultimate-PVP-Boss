@@ -6,6 +6,8 @@
   "command.ultimatepvpboss.none": "No PvP boss is loaded in this world.",
   "command.ultimatepvpboss.named": "Boss name set to %s.",
   "command.ultimatepvpboss.skin": "Boss skin set to %s.",
+  "command.ultimatepvpboss.skin_saved": "Future boss skin set and saved to %s.",
+  "command.ultimatepvpboss.skin_reset": "Boss skin reset to default (Steve).",
   "command.ultimatepvpboss.removed": "Removed %s PvP boss(es).",
   "command.ultimatepvpboss.kills": "%s villager kills: %s / %s.",
   "message.ultimatepvpboss.awakened": "%s slew ten villagers. %s has entered the world.",

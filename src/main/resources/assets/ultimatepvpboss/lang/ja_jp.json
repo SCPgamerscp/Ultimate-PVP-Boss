@@ -6,6 +6,8 @@
   "command.ultimatepvpboss.none": "このワールドにPvPボスはいない。",
   "command.ultimatepvpboss.named": "ボス名を %s に設定した。",
   "command.ultimatepvpboss.skin": "ボスのスキンを %s に設定した。",
+  "command.ultimatepvpboss.skin_saved": "次回以降出現するボスのスキンを %s に設定・保存した。",
+  "command.ultimatepvpboss.skin_reset": "ボスのスキンをデフォルト（Steve）にリセットした。",
   "command.ultimatepvpboss.removed": "PvPボスを %s 体削除した。",
   "command.ultimatepvpboss.kills": "%s の村人キル: %s / %s。",
   "message.ultimatepvpboss.awakened": "%sが村人を10人倒した。%sが現れた。",

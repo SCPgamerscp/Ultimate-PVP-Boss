@@ -7,6 +7,8 @@ public final class BossConfig {
 
     public static final ForgeConfigSpec.ConfigValue<String> BOSS_NAME;
     public static final ForgeConfigSpec.ConfigValue<String> SKIN_USERNAME;
+    public static final ForgeConfigSpec.ConfigValue<String> BOSS_BAR_COLOR;
+    public static final ForgeConfigSpec.ConfigValue<String> BOSS_BAR_OVERLAY;
     public static final ForgeConfigSpec.IntValue MAX_HEALTH;
     public static final ForgeConfigSpec.IntValue TOTEM_COUNT;
     public static final ForgeConfigSpec.IntValue GAPPLE_COUNT;
@@ -29,10 +31,14 @@ public final class BossConfig {
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
         b.push("boss");
-        BOSS_NAME = b.comment("Default display name. Change in-game with /pvpboss name")
+        BOSS_NAME = b.comment("Default display name (supports color codes with & or §). Change in-game with /pvpboss name")
                 .define("bossName", "The Legend");
         SKIN_USERNAME = b.comment("Minecraft username or direct image URL (http:// or https://) for the player skin")
                 .define("skinUsername", "Steve");
+        BOSS_BAR_COLOR = b.comment("Boss bar color: RED, BLUE, GREEN, YELLOW, PURPLE, WHITE, PINK")
+                .define("bossBarColor", "RED");
+        BOSS_BAR_OVERLAY = b.comment("Boss bar overlay style: PROGRESS, NOTCHED_6, NOTCHED_10, NOTCHED_12, NOTCHED_20")
+                .define("bossBarOverlay", "NOTCHED_10");
         MAX_HEALTH = b.comment("Max health. A real player is 20. Legendary default is 40 plus 7 totems.")
                 .defineInRange("maxHealth", 40, 20, 400);
         TOTEM_COUNT = b.comment("Totems of Undying the boss can pop")
@@ -71,6 +77,13 @@ public final class BossConfig {
                 .define("announce", true);
         b.pop();
         SPEC = b.build();
+    }
+
+    public static String formatColor(String text) {
+        if (text == null) {
+            return "";
+        }
+        return text.replaceAll("(?i)&([0-9a-fk-or])", "§$1");
     }
 
     private BossConfig() {}

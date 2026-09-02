@@ -8,6 +8,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -18,6 +19,9 @@ import net.minecraft.world.phys.AABB;
 import java.util.List;
 
 public final class PvpBossCommands {
+    private static final List<String> BAR_COLORS = List.of("RED", "BLUE", "GREEN", "YELLOW", "PURPLE", "WHITE", "PINK");
+    private static final List<String> BAR_STYLES = List.of("PROGRESS", "NOTCHED_6", "NOTCHED_10", "NOTCHED_12", "NOTCHED_20");
+
     private PvpBossCommands() {}
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -31,12 +35,29 @@ public final class PvpBossCommands {
                         .then(Commands.literal("reset")
                                 .executes(PvpBossCommands::nameReset))
                         .then(Commands.argument("name", StringArgumentType.greedyString())
+                                .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+                                        ctx.getSource().getOnlinePlayerNames(), builder
+                                ))
                                 .executes(PvpBossCommands::rename)))
                 .then(Commands.literal("skin")
                         .then(Commands.literal("reset")
                                 .executes(PvpBossCommands::skinReset))
                         .then(Commands.argument("username", StringArgumentType.greedyString())
+                                .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+                                        ctx.getSource().getOnlinePlayerNames(), builder
+                                ))
                                 .executes(PvpBossCommands::skin)))
+                .then(Commands.literal("bar")
+                        .then(Commands.literal("reset")
+                                .executes(PvpBossCommands::barReset))
+                        .then(Commands.literal("color")
+                                .then(Commands.argument("color", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(BAR_COLORS, builder))
+                                        .executes(PvpBossCommands::barColor)))
+                        .then(Commands.literal("style")
+                                .then(Commands.argument("style", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(BAR_STYLES, builder))
+                                        .executes(PvpBossCommands::barStyle))))
                 .then(Commands.literal("reset")
                         .executes(PvpBossCommands::resetAll)
                         .then(Commands.literal("all")
@@ -45,6 +66,8 @@ public final class PvpBossCommands {
                                 .executes(PvpBossCommands::skinReset))
                         .then(Commands.literal("name")
                                 .executes(PvpBossCommands::nameReset))
+                        .then(Commands.literal("bar")
+                                .executes(PvpBossCommands::barReset))
                         .then(Commands.literal("kills")
                                 .executes(PvpBossCommands::killsResetSelf)
                                 .then(Commands.argument("player", EntityArgument.player())
@@ -85,17 +108,18 @@ public final class PvpBossCommands {
     }
 
     private static int rename(CommandContext<CommandSourceStack> ctx) {
-        String name = StringArgumentType.getString(ctx, "name");
-        if (name.equalsIgnoreCase("reset") || name.equalsIgnoreCase("default")) {
+        String raw = StringArgumentType.getString(ctx, "name");
+        if (raw.equalsIgnoreCase("reset") || raw.equalsIgnoreCase("default")) {
             return nameReset(ctx);
         }
-        BossConfig.BOSS_NAME.set(name);
+        String formatted = BossConfig.formatColor(raw);
+        BossConfig.BOSS_NAME.set(raw);
         List<PvpBossEntity> bosses = bossesNear(ctx);
         for (PvpBossEntity boss : bosses) {
-            boss.setCustomName(Component.literal(name));
+            boss.setCustomName(Component.literal(formatted));
             boss.setCustomNameVisible(true);
         }
-        ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.named", name), true);
+        ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.named", formatted), true);
         return Math.max(1, bosses.size());
     }
 
@@ -111,9 +135,55 @@ public final class PvpBossCommands {
         return Math.max(1, bosses.size());
     }
 
+    private static int barColor(CommandContext<CommandSourceStack> ctx) {
+        String colorName = StringArgumentType.getString(ctx, "color").toUpperCase();
+        try {
+            net.minecraft.world.BossEvent.BossBarColor color = net.minecraft.world.BossEvent.BossBarColor.valueOf(colorName);
+            BossConfig.BOSS_BAR_COLOR.set(colorName);
+            List<PvpBossEntity> bosses = bossesNear(ctx);
+            for (PvpBossEntity boss : bosses) {
+                boss.getBossEvent().setColor(color);
+            }
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.bar_color", colorName), true);
+            return Math.max(1, bosses.size());
+        } catch (IllegalArgumentException e) {
+            ctx.getSource().sendFailure(Component.translatable("command.ultimatepvpboss.bar_invalid_color"));
+            return 0;
+        }
+    }
+
+    private static int barStyle(CommandContext<CommandSourceStack> ctx) {
+        String styleName = StringArgumentType.getString(ctx, "style").toUpperCase();
+        try {
+            net.minecraft.world.BossEvent.BossBarOverlay overlay = net.minecraft.world.BossEvent.BossBarOverlay.valueOf(styleName);
+            BossConfig.BOSS_BAR_OVERLAY.set(styleName);
+            List<PvpBossEntity> bosses = bossesNear(ctx);
+            for (PvpBossEntity boss : bosses) {
+                boss.getBossEvent().setOverlay(overlay);
+            }
+            ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.bar_style", styleName), true);
+            return Math.max(1, bosses.size());
+        } catch (IllegalArgumentException e) {
+            ctx.getSource().sendFailure(Component.translatable("command.ultimatepvpboss.bar_invalid_style"));
+            return 0;
+        }
+    }
+
+    private static int barReset(CommandContext<CommandSourceStack> ctx) {
+        BossConfig.BOSS_BAR_COLOR.set("RED");
+        BossConfig.BOSS_BAR_OVERLAY.set("NOTCHED_10");
+        List<PvpBossEntity> bosses = bossesNear(ctx);
+        for (PvpBossEntity boss : bosses) {
+            boss.applyBossBarSettings();
+        }
+        ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.bar_reset"), true);
+        return Math.max(1, bosses.size());
+    }
+
     private static int resetAll(CommandContext<CommandSourceStack> ctx) {
         nameReset(ctx);
         skinReset(ctx);
+        barReset(ctx);
         ServerPlayer player = ctx.getSource().getPlayer();
         if (player != null) {
             ModEvents.resetKills(player);

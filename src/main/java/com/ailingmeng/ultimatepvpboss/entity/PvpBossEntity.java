@@ -100,8 +100,22 @@ public class PvpBossEntity extends PathfinderMob {
         this.setTotemsLeft(BossConfig.TOTEM_COUNT.get());
         this.combat.initCounts();
         this.setSkinUsername(BossConfig.SKIN_USERNAME.get());
-        this.setCustomName(Component.literal(BossConfig.BOSS_NAME.get()));
+        this.setCustomName(Component.literal(BossConfig.formatColor(BossConfig.BOSS_NAME.get())));
+        applyBossBarSettings();
         this.bossEvent.setName(this.getDisplayName());
+    }
+
+    public void applyBossBarSettings() {
+        try {
+            this.bossEvent.setColor(BossEvent.BossBarColor.valueOf(BossConfig.BOSS_BAR_COLOR.get().toUpperCase()));
+        } catch (Exception ignored) {}
+        try {
+            this.bossEvent.setOverlay(BossEvent.BossBarOverlay.valueOf(BossConfig.BOSS_BAR_OVERLAY.get().toUpperCase()));
+        } catch (Exception ignored) {}
+    }
+
+    public ServerBossEvent getBossEvent() {
+        return this.bossEvent;
     }
 
     @Override

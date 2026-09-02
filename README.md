@@ -79,27 +79,28 @@ On victory, a chest drops containing **1,000 Enchanted Golden Apples** and **200
 | Command | Effect |
 | --- | --- |
 | `/pvpboss spawn [player]` | Summon the boss near you or specified player |
-| `/pvpboss name <name>` | Change display name of boss (saved for future spawns) |
+| `/pvpboss name <name>` | Change display name of boss (supports `&` or `§` color codes) |
 | `/pvpboss name reset` | Reset boss display name to default ("The Legend") |
-| `/pvpboss skin <username\|url>` | Apply skin from Minecraft username or direct PNG image URL (`http://`, `https://`) (saved for future spawns) |
+| `/pvpboss skin <username\|url>` | Apply skin from Minecraft username or direct PNG image URL (`http://`, `https://`) |
 | `/pvpboss skin reset` | Reset boss skin to default (Steve) |
-| `/pvpboss reset [skin\|name\|kills\|all]` | General reset command (resets skin, name, villager kills, or all) |
+| `/pvpboss bar color <color>` | Change boss bar color (RED, BLUE, GREEN, YELLOW, PURPLE, WHITE, PINK) |
+| `/pvpboss bar style <style>` | Change boss bar style (PROGRESS, NOTCHED_6, NOTCHED_10, NOTCHED_12, NOTCHED_20) |
+| `/pvpboss bar reset` | Reset boss bar appearance |
+| `/pvpboss reset [skin\|name\|bar\|kills\|all]` | General reset command |
 | `/pvpboss kills [player]` | Check villager kill progress |
 | `/pvpboss kills reset [player]` | Reset villager kill progress to 0 |
 | `/pvpboss remove` | Remove/despawn nearby bosses |
 
-## Custom Skins & Name Customization
+## Custom Skins, Names & Boss Bar
 
-You can change the champion's skin using either a **Minecraft username** or a **direct PNG image URL**:
+You can customize the champion's skin, display name, and boss bar using in-game commands or the config:
 
-- **Command**: `/pvpboss skin <username|url>`
-  - *Example (Username)*: `/pvpboss skin Notch`
-  - *Example (Direct URL)*: `/pvpboss skin https://i.imgur.com/example.png`
-  - *No boss in the world?* The command will automatically save the setting to your config for future boss spawns!
-- **Reset to Default**: `/pvpboss skin reset` (resets to Steve)
-- **Rename**: `/pvpboss name <name>` (e.g. `/pvpboss name §c§lPvP King`)
+- **Skin**: `/pvpboss skin <username|url>` (e.g. `/pvpboss skin Notch` or `/pvpboss skin https://i.imgur.com/example.png`)
+- **Name**: `/pvpboss name <name>` (supports standard Minecraft color codes with `&`, e.g. `/pvpboss name &c&lPvP King`)
+- **Boss Bar**: `/pvpboss bar color PURPLE`, `/pvpboss bar style NOTCHED_20`
+- **Reset**: `/pvpboss reset all` or `/pvpboss skin reset`, `/pvpboss name reset`, `/pvpboss bar reset`
 
-All skin and name preferences are persisted in `config/ultimatepvpboss-common.toml`.
+All preferences are automatically saved in `config/ultimatepvpboss-common.toml`.
 
 ## Configuration (`config/ultimatepvpboss-common.toml`)
 
@@ -191,27 +192,28 @@ Minecraft **Forge 1.20.1** 用Mod。プレイヤー型スキン、専用ボス�
 | コマンド | 効果 |
 | --- | --- |
 | `/pvpboss spawn [プレイヤー名]` | ボスを召喚 |
-| `/pvpboss name <名前>` | ボスの表示名を変更（次回以降のスポーンにも保存） |
+| `/pvpboss name <名前>` | ボスの表示名を変更（`&` や `§` のカラーコード対応） |
 | `/pvpboss name reset` | ボスの表示名をデフォルト（"The Legend"）にリセット |
-| `/pvpboss skin <ユーザー名\|画像URL>` | スキンをMinecraftユーザー名または直接の画像URL（`http://`, `https://`）に変更（次回以降のスポーンにも保存） |
+| `/pvpboss skin <ユーザー名\|画像URL>` | スキンをMinecraftユーザー名または直接の画像URL（`http://`, `https://`）に変更 |
 | `/pvpboss skin reset` | ボスのスキンをデフォルト（Steve）にリセット |
-| `/pvpboss reset [skin\|name\|kills\|all]` | 総合リセットコマンド（スキン・名前・村人キル数・または全てをリセット） |
+| `/pvpboss bar color <色>` | ボスバーの色を変更（RED, BLUE, GREEN, YELLOW, PURPLE, WHITE, PINK） |
+| `/pvpboss bar style <スタイル>` | ボスバーのスタイルを変更（PROGRESS, NOTCHED_6, NOTCHED_10, NOTCHED_12, NOTCHED_20） |
+| `/pvpboss bar reset` | ボスバーの外見をリセット |
+| `/pvpboss reset [skin\|name\|bar\|kills\|all]` | 総合リセットコマンド |
 | `/pvpboss kills [プレイヤー名]` | 村人討伐数を確認 |
 | `/pvpboss kills reset [プレイヤー名]` | 村人討伐カウントを 0 にリセット |
 | `/pvpboss remove` | 近くのボスを消去 |
 
-## スキン・名前のカスタマイズ
+## スキン・名前・ボスバーのカスタマイズ
 
-ボスのスキンは **Minecraftユーザー名** または **直接のPNG画像URL** で自由に変更できます：
+ボスのスキン、表示名、ボスバーはゲーム内コマンドまたは設定ファイルで自由に変更できます：
 
-- **スキン変更コマンド**: `/pvpboss skin <ユーザー名|画像URL>`
-  - *プレイヤー名指定の例*: `/pvpboss skin Notch`
-  - *画像URL指定の例*: `/pvpboss skin https://i.imgur.com/example.png`
-  - *ボスがいない場合*: 自動的に設定ファイル（Config）に保存され、次回以降に出現するボスのスキンとして適用されます。
-- **スキンのリセット**: `/pvpboss skin reset`（デフォルトのスティーブに戻す）
-- **名前の変更**: `/pvpboss name <名前>`（カラーコード `§c§l` 等も使用可能）
+- **スキン変更**: `/pvpboss skin <ユーザー名|画像URL>`（例: `/pvpboss skin Notch` または `/pvpboss skin https://i.imgur.com/example.png`）
+- **名前の変更**: `/pvpboss name <名前>`（`&c&lPvP King` のように `&` カラーコードも自動変換）
+- **ボスバーの変更**: `/pvpboss bar color PURPLE`, `/pvpboss bar style NOTCHED_20`
+- **一括リセット**: `/pvpboss reset all`（スキン・名前・ボスバー・キル数を初期化）
 
-設定内容は `config/ultimatepvpboss-common.toml` に永続保存されます。
+設定内容は `config/ultimatepvpboss-common.toml` に自動的に永続保存されます。
 
 ## 設定ファイル (`config/ultimatepvpboss-common.toml`)
 

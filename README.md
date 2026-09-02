@@ -85,10 +85,23 @@ On victory, a chest drops containing **1,000 Enchanted Golden Apples** and **200
 | `/pvpboss remove` | Remove/despawn nearby bosses |
 | `/pvpboss kills [player]` | Check villager kill progress |
 
+## Custom Skins & Name Customization
+
+You can change the champion's skin using either a **Minecraft username** or a **direct PNG image URL**:
+
+- **Command**: `/pvpboss skin <username|url>`
+  - *Example (Username)*: `/pvpboss skin Notch`
+  - *Example (Direct URL)*: `/pvpboss skin https://i.imgur.com/example.png`
+  - *No boss in the world?* The command will automatically save the setting to your config for future boss spawns!
+- **Reset to Default**: `/pvpboss skin reset` (resets to Steve)
+- **Rename**: `/pvpboss name <name>` (e.g. `/pvpboss name §c§lPvP King`)
+
+All skin and name preferences are persisted in `config/ultimatepvpboss-common.toml`.
+
 ## Configuration (`config/ultimatepvpboss-common.toml`)
 
 - `bossName`: Default display name
-- `skinUsername`: Minecraft username or direct image URL for skin
+- `skinUsername`: Minecraft username or direct image URL (http:// or https://) for skin
 - `maxHealth`: Max health (default 40.0)
 - `totemCount`: Number of Totems of Undying (default 7)
 - `gappleCount`, `healPotionCount`, `pearlCount`, `crystalCount`, `anchorCount`, `webCount`, `poisonCount`: Finite consumable limits
@@ -181,10 +194,23 @@ Minecraft **Forge 1.20.1** 用Mod。プレイヤー型スキン、専用ボス�
 | `/pvpboss remove` | 近くのボスを消去 |
 | `/pvpboss kills [プレイヤー名]` | 村人討伐数を確認 |
 
+## スキン・名前のカスタマイズ
+
+ボスのスキンは **Minecraftユーザー名** または **直接のPNG画像URL** で自由に変更できます：
+
+- **スキン変更コマンド**: `/pvpboss skin <ユーザー名|画像URL>`
+  - *プレイヤー名指定の例*: `/pvpboss skin Notch`
+  - *画像URL指定の例*: `/pvpboss skin https://i.imgur.com/example.png`
+  - *ボスがいない場合*: 自動的に設定ファイル（Config）に保存され、次回以降に出現するボスのスキンとして適用されます。
+- **スキンのリセット**: `/pvpboss skin reset`（デフォルトのスティーブに戻す）
+- **名前の変更**: `/pvpboss name <名前>`（カラーコード `§c§l` 等も使用可能）
+
+設定内容は `config/ultimatepvpboss-common.toml` に永続保存されます。
+
 ## 設定ファイル (`config/ultimatepvpboss-common.toml`)
 
 - `bossName`: デフォルトのボス名
-- `skinUsername`: スキン用のプレイヤー名または画像URL
+- `skinUsername`: スキン用のプレイヤー名または画像URL (http:// または https://)
 - `maxHealth`: 最大体力（初期値 40.0）
 - `totemCount`: トーテムの所持数（初期値 7）
 - `gappleCount`, `pearlCount`, `crystalCount` 等: 各アイテムの所持上限数

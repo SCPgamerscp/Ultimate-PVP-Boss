@@ -85,6 +85,12 @@ public final class ModEvents {
                 .getInt(KILL_KEY);
     }
 
+    public static void resetKills(ServerPlayer player) {
+        CompoundTag persistent = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+        persistent.putInt(KILL_KEY, 0);
+        player.getPersistentData().put(Player.PERSISTED_NBT_TAG, persistent);
+    }
+
     public static PvpBossEntity spawnNear(ServerLevel level, BlockPos around, @javax.annotation.Nullable ServerPlayer target) {
         BlockPos spawn = findOpen(level, around);
         PvpBossEntity boss = ModEntities.PVP_BOSS.get().create(level);

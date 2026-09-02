@@ -28,6 +28,8 @@ public final class PvpBossCommands {
                         .then(Commands.argument("player", EntityArgument.player())
                                 .executes(PvpBossCommands::spawnAt)))
                 .then(Commands.literal("name")
+                        .then(Commands.literal("reset")
+                                .executes(PvpBossCommands::nameReset))
                         .then(Commands.argument("name", StringArgumentType.greedyString())
                                 .executes(PvpBossCommands::rename)))
                 .then(Commands.literal("skin")
@@ -35,10 +37,26 @@ public final class PvpBossCommands {
                                 .executes(PvpBossCommands::skinReset))
                         .then(Commands.argument("username", StringArgumentType.greedyString())
                                 .executes(PvpBossCommands::skin)))
+                .then(Commands.literal("reset")
+                        .executes(PvpBossCommands::resetAll)
+                        .then(Commands.literal("all")
+                                .executes(PvpBossCommands::resetAll))
+                        .then(Commands.literal("skin")
+                                .executes(PvpBossCommands::skinReset))
+                        .then(Commands.literal("name")
+                                .executes(PvpBossCommands::nameReset))
+                        .then(Commands.literal("kills")
+                                .executes(PvpBossCommands::killsResetSelf)
+                                .then(Commands.argument("player", EntityArgument.player())
+                                        .executes(PvpBossCommands::killsResetOther))))
                 .then(Commands.literal("remove")
                         .executes(PvpBossCommands::remove))
                 .then(Commands.literal("kills")
                         .executes(PvpBossCommands::killsSelf)
+                        .then(Commands.literal("reset")
+                                .executes(PvpBossCommands::killsResetSelf)
+                                .then(Commands.argument("player", EntityArgument.player())
+                                        .executes(PvpBossCommands::killsResetOther)))
                         .then(Commands.argument("player", EntityArgument.player())
                                 .executes(PvpBossCommands::killsOther))));
     }
@@ -68,6 +86,9 @@ public final class PvpBossCommands {
 
     private static int rename(CommandContext<CommandSourceStack> ctx) {
         String name = StringArgumentType.getString(ctx, "name");
+        if (name.equalsIgnoreCase("reset") || name.equalsIgnoreCase("default")) {
+            return nameReset(ctx);
+        }
         BossConfig.BOSS_NAME.set(name);
         List<PvpBossEntity> bosses = bossesNear(ctx);
         for (PvpBossEntity boss : bosses) {
@@ -76,6 +97,47 @@ public final class PvpBossCommands {
         }
         ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.named", name), true);
         return Math.max(1, bosses.size());
+    }
+
+    private static int nameReset(CommandContext<CommandSourceStack> ctx) {
+        String def = "The Legend";
+        BossConfig.BOSS_NAME.set(def);
+        List<PvpBossEntity> bosses = bossesNear(ctx);
+        for (PvpBossEntity boss : bosses) {
+            boss.setCustomName(Component.literal(def));
+            boss.setCustomNameVisible(true);
+        }
+        ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.name_reset", def), true);
+        return Math.max(1, bosses.size());
+    }
+
+    private static int resetAll(CommandContext<CommandSourceStack> ctx) {
+        nameReset(ctx);
+        skinReset(ctx);
+        ServerPlayer player = ctx.getSource().getPlayer();
+        if (player != null) {
+            ModEvents.resetKills(player);
+        }
+        ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.all_reset"), true);
+        return 1;
+    }
+
+    private static int killsResetSelf(CommandContext<CommandSourceStack> ctx) {
+        ServerPlayer player = ctx.getSource().getPlayer();
+        if (player == null) {
+            ctx.getSource().sendFailure(Component.translatable("command.ultimatepvpboss.none"));
+            return 0;
+        }
+        ModEvents.resetKills(player);
+        ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.kills_reset", player.getDisplayName()), true);
+        return 1;
+    }
+
+    private static int killsResetOther(CommandContext<CommandSourceStack> ctx) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = EntityArgument.getPlayer(ctx, "player");
+        ModEvents.resetKills(player);
+        ctx.getSource().sendSuccess(() -> Component.translatable("command.ultimatepvpboss.kills_reset", player.getDisplayName()), true);
+        return 1;
     }
 
     private static int skin(CommandContext<CommandSourceStack> ctx) {

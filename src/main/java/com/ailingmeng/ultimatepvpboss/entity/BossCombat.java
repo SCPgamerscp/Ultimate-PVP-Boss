@@ -610,11 +610,19 @@ public class BossCombat {
         if (!grief()) {
             return;
         }
-        int dx = hazardPos.getX() - bossPos.getX();
-        int dz = hazardPos.getZ() - bossPos.getZ();
-        Direction dir = Direction.getNearest(dx, 0, dz);
-        BlockPos shieldPos = bossPos.relative(dir);
-        if (!shieldPos.equals(hazardPos) && !shieldPos.equals(hazardPos.below())) {
+        Vec3 bossCenter = boss.position();
+        Vec3 hazardCenter = Vec3.atCenterOf(hazardPos);
+        Vec3 diff = hazardCenter.subtract(bossCenter);
+        double distSq = diff.x * diff.x + diff.z * diff.z;
+        if (distSq < 0.01) {
+            return;
+        }
+        Vec3 dir = diff.normalize();
+        double shieldX = bossCenter.x + dir.x * 1.1;
+        double shieldZ = bossCenter.z + dir.z * 1.1;
+        BlockPos shieldPos = BlockPos.containing(shieldX, boss.getY(), shieldZ);
+
+        if (!shieldPos.equals(boss.blockPosition()) && !shieldPos.equals(hazardPos) && !shieldPos.equals(hazardPos.below())) {
             placeIfReplaceable(shieldPos, Blocks.OBSIDIAN.defaultBlockState());
         }
     }

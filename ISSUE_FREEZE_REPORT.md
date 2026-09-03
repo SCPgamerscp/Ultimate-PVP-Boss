@@ -1,7 +1,7 @@
 # [Issue] Modパック環境での戦闘中、数十秒〜数分で画面が完全停止（無音・写真のようにフリーズ）する問題
 
 ## 1. 概要
-Minecraft 1.20.1 (Forge 47.3.0) 環境において、本Mod「Ultimate PVP Boss」のボス（The Legend / `PvpBossEntity`）と戦闘を行っていると、開始から数十秒〜数分（約50秒〜4分程度）経過した時点で、**突然画面が「1枚の写真」のように完全に静止し、同時にゲーム内の音（BGM・SE）も瞬時に完全無音（フリーズ）** になる。
+Minecraft 1.20.1 (Forge 47.3.0) 環境において、本Mod「Ultimate PVP Boss」のボス（The Legend / `PvpBossEntity`）と戦闘を行っていると、開始から数十秒〜数分経過した時点で、**突然画面が「1枚の写真」のように完全に静止し、同時にゲーム内の音（BGM・SE）も瞬時に完全無音（フリーズ）** になる。
 クラッシュではないため、`crash-reports/` にレポートは一切出力されない。
 
 ---
@@ -11,29 +11,53 @@ Minecraft 1.20.1 (Forge 47.3.0) 環境において、本Mod「Ultimate PVP Boss�
 1. **停止の性質**:
    - メモリリークやFPS低下のように徐々に重くなるのではなく、**突然急にピタッと画面が止まり、音も瞬時に完全に消える**。
 2. **サーバー側（Server Thread）は正常に動いている**:
-   - `latest.log` の記録から、画面が写真停止した後も、**内部サーバー（Server Thread）は毎秒20回正常にTick処理を継続している**ことが確認されている（ボスのAIや他Modのログが出力され続けている）。
+   - 画面が写真停止した後も、内部サーバーは裏で毎秒20回正常にTick処理を継続している。
    - 停止しているのは **「クライアント側（Render Thread / OpenGL / GLFWウィンドウメッセージループ）」** のみ。
 3. **プレイヤーの死亡が原因ではない**:
-   - 以前はログの末尾に死亡メッセージがあったため死亡処理が疑われたが、**クリエイティブモード（HP満タン・生存状態）でテストした際も全く同様に画面停止が発生した**。
-   - 実際には「画面が先に止まり、操作不能で棒立ちになっている間に裏でサーバーが動いてボスに倒されていた（後から死亡ログが記録された）」ことが証明されている。
+   - クリエイティブモード（HP満タン・生存状態）でテストした際も全く同様に画面停止が発生した。
 4. **プレイヤー側の操作・装備は無関係**:
-   - プレイヤーが武器を振らず、魔法も使わず、**ただ逃げ回る・見ているだけでも、一定時間で勝手に固まる**。
+   - プレイヤーが武器を振らず、魔法も使わず、ただ逃げ回る・見ているだけでも、一定時間で勝手に固まる。
 5. **地形破壊（Griefing）は無関係**:
    - ボスの地形破壊・ブロック設置（`mineToward`、溶岩・クモの巣設置、クリスタル・アンカー爆破）をコンフィグで完全OFFにした状態でも同様に固まる。
-6. **環境の差異**:
+6. **ボスとの距離は無関係**:
+   - 至近距離（近接戦闘）でも、遠距離（逃走・射撃）でも、両方の状況で同様に固まる。
+7. **ToroHealth および Embeddium は無関係（無罪確定）**:
+   - **`ToroHealth` および `Embeddium`（Sodium）を完全にModフォルダから抜いた状態**でテストを実施したが、全く同様に写真停止（無音フリーズ）が発生した。
+8. **環境の差異**:
    - **Vanilla（他Modなしの単体環境）**: 正常に動作し、フリーズは一切発生しない。
-   - **本Modパック環境（約80個のMod導入）**: 必ず一定時間で画面が写真停止する。
+   - **本Modパック環境（Epic Fight等多数のMod導入）**: 必ず一定時間で画面が写真停止する。
 
 ---
 
-## 3. 環境情報
+## 3. ログから判明した決定的なスタックトレース
+フリーズ発生時、`Render thread`（描画スレッド）の末尾に以下のスタックトレースが記録されて停止している：
+
+```text
+[Render thread/WARN]: Failed to load texture: minecraft:textures/entity/steve.png
+java.io.FileNotFoundException: minecraft:textures/entity/steve.png
+	at net.minecraft.client.renderer.texture.SimpleTexture$TextureImage.m_118155_(SimpleTexture.java:83)
+	at net.minecraft.client.renderer.texture.SimpleTexture.m_6335_(SimpleTexture.java:58)
+	at net.minecraft.client.renderer.texture.SimpleTexture.m_6704_(SimpleTexture.java:29)
+	at net.minecraft.client.renderer.texture.TextureManager.m_118515_(TextureManager.java:96)
+	at net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer.renderModel(HumanoidArmorLayer.java:109)
+	at net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer.m_117118_(HumanoidArmorLayer.java:67)
+	at net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer.m_6494_(HumanoidArmorLayer.java:44)
+	at net.minecraft.client.renderer.entity.LivingEntityRenderer.m_7392_(LivingEntityRenderer.java:131)
+	at net.minecraft.client.renderer.entity.EntityRenderDispatcher.m_114384_(EntityRenderDispatcher.java:140)
+	at net.minecraft.client.renderer.LevelRenderer.m_109517_(LevelRenderer.java:1440)
+	at net.minecraft.client.renderer.GameRenderer.m_109089_(GameRenderer.java:1126)
+	at net.minecraft.client.Minecraft.m_91383_(Minecraft.java:1146)
+```
+
+このスタックトレースから、停止箇所は **`HumanoidArmorLayer.renderModel`（防具モデルおよびエンチャントGlintの描画）** であることが判明している。
+
+---
+
+## 4. 環境情報
 - **Minecraft**: 1.20.1
 - **Forge**: 47.3.0
-- **リポジトリの最新コミット**: `f0e4df8`（試行錯誤前のクリーンな状態：スキン反映、ブロック破壊時ドロップ、クリスタル切れ時アンカー移行、アイテム数調整が含まれる）
-- **主な導入Mod（競合の可能性があるMod）**:
+- **主な導入Mod**:
   - `epic-fight-20.14.17-mc1.20.1-forge.jar`（および WeaponsOfMiracles, epic_fight_avalon 等）
-  - `embeddium-0.3.31+mc1.20.1.jar`（Sodium Forge移植 / 描画エンジン）
-  - `ToroHealth-Unofficial-Forge-1.20.1-1.0.0.jar`
   - `Pehkui-3.8.2+1.20.1-forge.jar`
   - `player-animation-lib-forge-1.0.2-rc1+1.20.jar`
   - `CustomNPCs-1.20.1-GBPort-Unofficial-1.20.1.20260711.jar`
@@ -43,63 +67,14 @@ Minecraft 1.20.1 (Forge 47.3.0) 環境において、本Mod「Ultimate PVP Boss�
 
 ---
 
-## 4. これまでの検証・試行錯誤で「無実」と判明した要素
-1. **外部スキンダウンロードのHTTPスレッド**:
-   - 一時的にスキン取得を停止しバニラデフォルトスキン固定にしても再発した。
-2. **モデルの種類（PlayerModel vs HumanoidModel）**:
-   - `PvpBossRenderer` を `PlayerModel` から `HumanoidModel`（Zombieレイヤー構成）に変更しても再発した。
-3. **矢・トライデントの多重散乱**:
-   - 矢の数が少なく、武器持ち替えが目立たない状況でも再発した。
-4. **地形破壊・ブロック爆破**:
-   - OFFにしても再発した。
-5. **プレイヤー側の攻撃アクション**:
-   - 逃げ回る・見ているだけでも再発した。
+## 5. 調査・解決すべき最有力容疑
 
----
-
-## 5. 次の調査・解決すべき最有力容疑
-「サーバーは動いており、クライアントの画面と音が同時に完全無音凍結する」ことから、以下のいずれかが原因である可能性が高い：
-
-1. **パケットの連続送信によるクライアントバッファのデッドロック**:
-   - ボスが毎tick `lookAtFast`（`setYRot` / `yBodyRot` / `yHeadRot`）で角度パケットをクライアントに強制同期し続けている。
-   - ボスが `setSprinting(true/false)` を毎tick連打している（`ClientboundSetEntityDataPacket` の過剰送信）。
-   - これが Epic Fight や Embeddium のクライアント側パケットハンドラを溢れさせている可能性。
-2. **ボスのボスバー（`ServerBossEvent`）**:
-   - 画面上部に表示されているボスバーのパケット更新が、ToroHealth や Epic Fight の HUD レンダラーと競合して GUI デッドロックを起こしている可能性。
-3. **ボスの Pathfinder（A* 経路探索）のネイティブ過負荷**:
-   - `getNavigation().moveTo(target, 1.3)` が毎tick（毎秒20回）呼ばれており、何らかのModのコリジョン計算と衝突している可能性。
-4. **クライアント側の `PvpBossEntity` の tick / レンダラーでのスレッド競合**:
-   - `PvpBossEntity.java` または `PvpBossRenderer.java` の中で、クライアント側メインスレッドでブロッキング処理が走っている可能性。
-
----
-
-## 6. 追加調査で判明した原因と修正（2026-09-03）
-
-コードを再調査した結果、上記以外にクライアントを停止させ得る具体的な問題が見つかった。
-
-### 最重要: スキンダウンロード失敗時の無制限スレッド生成
-
-`PvpBossRenderer#getTextureLocation` は毎フレーム `BossSkinTexture#get` を呼ぶ。従来実装では、スキン取得に失敗すると `LOADING` を直ちに解除していたため、次の描画フレームで新しいダウンロードスレッドを再生成していた。
-
-Modパック環境で通信先が遮断される、TLS処理が遅延する、または接続が即座に失敗する場合、短時間に大量のネイティブスレッドとHTTP接続が作られる。これはJavaクラッシュを発生させずに、Render Thread・音声処理・OSのウィンドウ処理をまとめて飢餓状態にし、「映像と音が突然同時に止まる」という現象を引き起こし得る。単体環境との差も、ネットワーク・メモリ・他Modによるスレッド使用量の違いで説明できる。
-
-修正内容:
-
-- デフォルトの `Steve` はネットワーク取得せず、組み込みテクスチャを直接使用
-- スキンダウンロードをデーモンの単一スレッドExecutorに限定
-- 接続5秒・読み込み10秒のタイムアウトを設定
-- 失敗したスキンは5分間再試行しないネガティブキャッシュを追加
-- テクスチャ登録が完了するまで同一スキンの `LOADING` 状態を維持
-- 登録失敗時に `NativeImage` を解放
-
-### 併発し得る高頻度更新の抑制
-
-他ModのEntity・アニメーション・衝突フックとの競合を減らすため、次も修正した。
-
-- 毎tickの直接的な `setYRot` / `setXRot` / `yBodyRot` / `yHeadRot` 書き換えを廃止し、Vanillaの `LookControl` に統一
-- Sprint状態は値が変化した場合だけ更新
-- 同じNBTを持つメインハンド装備を毎tick再設定しない
-- A*経路は既存経路を維持し、再計算を最大5tickに1回へ制限
-- Entity追跡範囲を128チャンク（2,048ブロック）から10チャンクへ適正化し、同期間隔を1tickから2tickへ変更
-
-これらはボスの戦闘ロジックを維持しつつ、クライアント同期パケットとMod互換フックの呼び出し量を削減する。修正版では特に、カスタムスキン取得先へ接続できない状態を含めた長時間戦闘テストを行うこと。
+1. **`HumanoidArmorLayer` に対する他Modの Mixin / ボーンフックの競合**:
+   - ボスはネザライト防具一式（フルエンチャント）を常時装備している。
+   - `Epic Fight` や `player-animation-lib`、`CustomNPCs` は、防具描画（`HumanoidArmorLayer`）に Mixin を差し込み、人型エンティティの防具モデルを変形・追従させている。
+   - ボスの特定のアクション（ジャンプ、腕振り、移動）の連続により、防具レイヤーの描画バッファまたは行列計算がデッドロックを起こしている可能性。
+2. **`BossSkinTexture` のバニラテクスチャパス指定ミス**:
+   - `BossSkinTexture.java` 内で `new ResourceLocation("textures/entity/steve.png")` が指定されているが、Minecraft 1.20.1 にこのパスは存在しない（バニラは `textures/entity/player/wide/steve.png` または `DefaultPlayerSkin.getDefaultSkin()`）。
+   - 存在しないテクスチャのロード失敗が毎フレーム発生し、TextureManager のバッファを圧迫している。
+3. **ボスのエンティティトラッキングとパケット同期**:
+   - バニラのエンティティ同期と他Modのアニメーション同期が競合している可能性。

@@ -225,18 +225,10 @@ public class PvpBossEntity extends PathfinderMob {
     }
 
     public void lookAtFast(LivingEntity target) {
-        Vec3 eyes = target.getEyePosition();
-        double dx = eyes.x - this.getX();
-        double dy = eyes.y - this.getEyeY();
-        double dz = eyes.z - this.getZ();
-        double horiz = Math.sqrt(dx * dx + dz * dz);
-        float yaw = (float) (Math.atan2(dz, dx) * (180F / Math.PI)) - 90.0F;
-        float pitch = (float) (-(Math.atan2(dy, horiz) * (180F / Math.PI)));
-        this.setYRot(yaw);
-        this.setXRot(pitch);
-        this.yBodyRot = yaw;
-        this.yHeadRot = yaw;
-        this.getLookControl().setLookAt(target, 180.0F, 180.0F);
+        // Let vanilla's look controller apply and synchronize rotation. Writing body, head,
+        // yaw and pitch directly every tick creates redundant entity updates and bypasses
+        // animation hooks used by client-side combat mods.
+        this.getLookControl().setLookAt(target, 90.0F, 90.0F);
     }
 
     public void teleportQuiet(double x, double y, double z) {

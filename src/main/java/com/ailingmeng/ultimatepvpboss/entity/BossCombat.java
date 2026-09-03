@@ -58,6 +58,7 @@ public class BossCombat {
     private int strafeSign = 1;
     private int strafeFlip;
     private int terrainCd;
+    private int navigationCd;
     private BlockPos pendingLava;
     private int lavaPlaceTicks;
     private EndCrystal pendingCrystal;
@@ -147,12 +148,12 @@ public class BossCombat {
 
         LivingEntity target = selectTarget(level);
         if (target == null) {
-            boss.setSprinting(false);
+            setSprinting(false);
             return;
         }
         boss.setTarget(target);
         boss.lookAtFast(target);
-        boss.setSprinting(true);
+        setSprinting(true);
 
         double dist = boss.distanceTo(target);
         float hp = boss.getHealth() / boss.getMaxHealth();
@@ -175,7 +176,7 @@ public class BossCombat {
         if (burstLeft > 0 && boss.tickCount % 2 == 0) {
             firePiercingBolt(target);
             burstLeft--;
-            boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, BossGear.crossbow());
+            equipMainHand(BossGear.crossbow());
             return;
         }
         if (tridentLeft > 0 && boss.tickCount % 6 == 0) {
@@ -199,16 +200,16 @@ public class BossCombat {
                 circleStrafe(target);
             } else {
                 if (blocking) {
-                    boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, BossGear.axe());
+                    equipMainHand(BossGear.axe());
                 }
-                boss.getNavigation().moveTo(target, 1.3);
+                moveToward(target, 1.3);
             }
         } else {
             if (blocking) {
                 if (burstCd == 0) {
                     startCrossbowBurst(target);
                 } else {
-                    boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, BossGear.axe());
+                    equipMainHand(BossGear.axe());
                     if (dist > 8) {
                         tryPearlToward(target);
                     }
@@ -224,7 +225,7 @@ public class BossCombat {
                     tryPearlToward(target);
                 }
             }
-            boss.getNavigation().moveTo(target, 1.3);
+            moveToward(target, 1.3);
         }
     }
 
@@ -249,6 +250,7 @@ public class BossCombat {
         if (crystalDetonateTicks > 0) crystalDetonateTicks--;
         if (anchorDetonateTicks > 0) anchorDetonateTicks--;
         if (terrainCd > 0) terrainCd--;
+        if (navigationCd > 0) navigationCd--;
         if (critJumpTicks > 0) critJumpTicks--;
         if (strafeFlip++ > 40) {
             strafeFlip = 0;
@@ -403,7 +405,7 @@ public class BossCombat {
 
     private void swordCrit(LivingEntity target) {
         if (critJumpTicks == 0 && boss.onGround()) {
-            boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, BossGear.sword());
+            equipMainHand(BossGear.sword());
             boss.jumpNow();
             critJumpTicks = 4;
             return;
@@ -427,7 +429,7 @@ public class BossCombat {
     }
 
     private void meleeHit(LivingEntity target, ItemStack weapon, boolean crit) {
-        boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, weapon);
+        equipMainHand(weapon);
         boss.lookAtFast(target);
         float dmg = 8.0F + EnchantmentHelper.getDamageBonus(weapon, target.getMobType());
         if (crit) {
@@ -453,7 +455,7 @@ public class BossCombat {
     }
 
     private void fireBow(LivingEntity target) {
-        boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, BossGear.bow());
+        equipMainHand(BossGear.bow());
         boss.lookAtFast(target);
         Arrow arrow = new Arrow(boss.level(), boss);
         Vec3 start = boss.getEyePosition();
@@ -503,11 +505,11 @@ public class BossCombat {
     private void startTridentVolley() {
         tridentLeft = 3;
         tridentCd = 55;
-        boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, BossGear.trident());
+        equipMainHand(BossGear.trident());
     }
 
     private void throwTrident(LivingEntity target) {
-        boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, BossGear.trident());
+        equipMainHand(BossGear.trident());
         boss.lookAtFast(target);
         ThrownTrident trident = new ThrownTrident(boss.level(), boss, BossGear.trident());
         Vec3 start = boss.getEyePosition();
@@ -723,7 +725,7 @@ public class BossCombat {
         boss.jumpNow();
         BlockPos under = feet;
         if (boss.level().getBlockState(under).canBeReplaced() || boss.level().getBlockState(under).isAir()) {
-            boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, new ItemStack(Items.OBSIDIAN));
+            equipMainHand(new ItemStack(Items.OBSIDIAN));
             boss.level().setBlock(under, Blocks.COBBLESTONE.defaultBlockState(), 3);
             boss.playSound(SoundEvents.STONE_PLACE, 1.0F, 1.0F);
         }
@@ -746,7 +748,7 @@ public class BossCombat {
         if (state.is(Blocks.OBSIDIAN) && boss.distanceToSqr(Vec3.atCenterOf(pos)) > 16) {
             return;
         }
-        boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, BossGear.pickaxe());
+        equipMainHand(BossGear.pickaxe());
         boss.level().destroyBlock(pos, true, boss);
         boss.swing(InteractionHand.MAIN_HAND);
         boss.gameEvent(GameEvent.BLOCK_DESTROY);
@@ -762,7 +764,29 @@ public class BossCombat {
         Vec3 motion = boss.getDeltaMovement().add(perp);
         boss.setDeltaMovement(motion.x, boss.getDeltaMovement().y, motion.z);
         if (boss.distanceTo(target) > 2.4) {
-            boss.getNavigation().moveTo(target, 1.0);
+            moveToward(target, 1.0);
+        }
+    }
+
+    private void setSprinting(boolean sprinting) {
+        if (boss.isSprinting() != sprinting) {
+            boss.setSprinting(sprinting);
+        }
+    }
+
+    private void equipMainHand(ItemStack stack) {
+        ItemStack current = boss.getMainHandItem();
+        if (!ItemStack.isSameItemSameTags(current, stack)) {
+            boss.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, stack);
+        }
+    }
+
+    private void moveToward(LivingEntity target, double speed) {
+        // The current path remains active between recalculations. Rebuilding an A* path every
+        // server tick is wasteful and invokes collision hooks from every installed mod.
+        if (navigationCd == 0 || boss.getNavigation().isDone()) {
+            boss.getNavigation().moveTo(target, speed);
+            navigationCd = 5;
         }
     }
 

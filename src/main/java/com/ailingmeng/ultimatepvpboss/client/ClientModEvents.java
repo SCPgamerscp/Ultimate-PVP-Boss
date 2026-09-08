@@ -7,6 +7,7 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.ThrownTridentRenderer;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = UltimatePvpBoss.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -16,6 +17,7 @@ public final class ClientModEvents {
     @SubscribeEvent
     public static void renderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.PVP_BOSS.get(), PvpBossRenderer::new);
+        event.registerEntityRenderer(ModEntities.BOSS_TRIDENT.get(), ThrownTridentRenderer::new);
     }
 
     // RenderTickEvent belongs to the FORGE bus, not the MOD bus used above. The nested

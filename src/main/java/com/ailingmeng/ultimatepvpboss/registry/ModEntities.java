@@ -2,6 +2,7 @@ package com.ailingmeng.ultimatepvpboss.registry;
 
 import com.ailingmeng.ultimatepvpboss.UltimatePvpBoss;
 import com.ailingmeng.ultimatepvpboss.entity.PvpBossEntity;
+import com.ailingmeng.ultimatepvpboss.entity.BossTridentEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.registries.DeferredRegister;
@@ -20,6 +21,13 @@ public final class ModEntities {
                     .clientTrackingRange(10)
                     .updateInterval(2)
                     .build("pvp_boss"));
+
+    public static final RegistryObject<EntityType<BossTridentEntity>> BOSS_TRIDENT = ENTITIES.register("boss_trident",
+            () -> EntityType.Builder.<BossTridentEntity>of(BossTridentEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F)
+                    .clientTrackingRange(4)
+                    .updateInterval(1)
+                    .build("boss_trident"));
 
     private ModEntities() {}
 }

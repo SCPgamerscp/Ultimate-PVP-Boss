@@ -18,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.ThrownPotion;
-import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
@@ -511,7 +510,7 @@ public class BossCombat {
     private void throwTrident(LivingEntity target) {
         equipMainHand(BossGear.trident());
         boss.lookAtFast(target);
-        ThrownTrident trident = new ThrownTrident(boss.level(), boss, BossGear.trident());
+        BossTridentEntity trident = new BossTridentEntity(boss.level(), boss);
         Vec3 start = boss.getEyePosition();
         Vec3 aim = predict(target, start, 2.5F);
         Vec3 dir = aim.subtract(start).normalize();

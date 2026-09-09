@@ -43,6 +43,11 @@ minecraft {
 
         gameTestServer {
             property 'forge.enabledGameTestNamespaces', mod_id
+            mods {
+                "${mod_id}" {
+                    source sourceSets.test
+                }
+            }
         }
 
         data {
@@ -119,6 +124,15 @@ tasks.register('renderStallRegressionTest', JavaExec) {
     }
 }
 
+tasks.register('tridentCollisionRegressionTest', JavaExec) {
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.ailingmeng.ultimatepvpboss.entity.TridentCollisionBudgetTest'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 tasks.named('check') {
-    dependsOn tasks.named('renderStallRegressionTest')
+    dependsOn tasks.named('renderStallRegressionTest'), tasks.named('tridentCollisionRegressionTest')
 }

@@ -16,10 +16,8 @@ public final class ModEntities {
     public static final RegistryObject<EntityType<PvpBossEntity>> PVP_BOSS = ENTITIES.register("pvp_boss",
             () -> EntityType.Builder.of(PvpBossEntity::new, MobCategory.MISC)
                     .sized(0.6F, 1.8F)
-                    // Forge tracking range is measured in chunks. Ten chunks still covers the
-                    // configured 128-block hunt range without tracking the boss from 2,048 blocks.
-                    .clientTrackingRange(10)
-                    .updateInterval(2)
+                    .clientTrackingRange(128)
+                    .updateInterval(1)
                     .build("pvp_boss"));
 
     public static final RegistryObject<EntityType<BossTridentEntity>> BOSS_TRIDENT = ENTITIES.register("boss_trident",

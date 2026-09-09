@@ -1,8 +1,14 @@
 package com.ailingmeng.ultimatepvpboss.entity;
 
+import com.ailingmeng.ultimatepvpboss.config.BossConfig;
 import com.ailingmeng.ultimatepvpboss.registry.ModEntities;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -47,6 +53,27 @@ public final class BossTridentEntity extends ThrownTrident {
         // and receive the server's movement and Loyalty no-physics flag.
         if (!collisionBudget.tryQuery(level().isClientSide, isNoPhysics())) return null;
         return super.findHitEntity(start, end);
+    }
+
+    @Override
+    protected void onHitEntity(EntityHitResult result) {
+        super.onHitEntity(result);
+        if (!level().isClientSide && BossConfig.CHANNELING_ALWAYS.get() && !level().isThundering()) {
+            Entity target = result.getEntity();
+            BlockPos pos = target.blockPosition();
+            if (level().canSeeSky(pos)) {
+                LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level());
+                if (bolt != null) {
+                    bolt.moveTo(Vec3.atBottomCenterOf(pos));
+                    Entity owner = getOwner();
+                    if (owner instanceof ServerPlayer player) {
+                        bolt.setCause(player);
+                    }
+                    level().addFreshEntity(bolt);
+                    playSound(SoundEvents.TRIDENT_THUNDER, 5.0F, 1.0F);
+                }
+            }
+        }
     }
 
     @Override

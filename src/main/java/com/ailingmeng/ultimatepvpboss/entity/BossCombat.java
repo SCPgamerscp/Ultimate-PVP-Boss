@@ -517,15 +517,6 @@ public class BossCombat {
         boss.level().addFreshEntity(trident);
         boss.playSound(SoundEvents.TRIDENT_THROW, 1.0F, 1.0F);
         boss.swing(InteractionHand.MAIN_HAND);
-        if (BossConfig.CHANNELING_ALWAYS.get() && boss.level().canSeeSky(target.blockPosition())) {
-            if (boss.getRandom().nextFloat() < 0.45F) {
-                net.minecraft.world.entity.LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(boss.level());
-                if (bolt != null) {
-                    bolt.moveTo(target.getX(), target.getY(), target.getZ());
-                    boss.level().addFreshEntity(bolt);
-                }
-            }
-        }
     }
 
     private void throwPoison(LivingEntity target) {
